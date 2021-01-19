@@ -11,6 +11,7 @@
     - [0.2 错误代码(errorCode)](#02-错误代码errorcode)
     - [0.3 通用返回格式](#03-通用返回格式)
     - [0.4 API参数发送方式](#04-api参数发送方式)
+    - [0.5 UserEntity定义](#05-userentity定义)
   - [1.0 用户系统](#10-用户系统)
     - [1.1 注册用户](#11-注册用户)
       - [1.1.1 请求方式](#111-请求方式)
@@ -32,6 +33,12 @@
       - [1.5.1 请求方式](#151-请求方式)
       - [1.5.2 参数](#152-参数)
       - [1.5.3 返回值:](#153-返回值)
+    - [1.6 登录](#16-登录)
+      - [1.2.1 请求方式](#121-请求方式-1)
+      - [1.2.2 参数](#122-参数-1)
+      - [1.2.3 返回值:](#123-返回值-1)
+        - [1.2.3.1 失败时定义](#1231-失败时定义)
+        - [1.2.3.2 成功时定义](#1232-成功时定义)
 
 ## 0.0 公共常数及API约定
 
@@ -116,6 +123,64 @@
 
 注: 如果API定义的URL中有`{{variableName}}`则用变量值替代`{{variableName}}`, 且请求体中无需再次包含变量.
 
+### 0.5 UserEntity定义
+
+UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也是一个JSON Object, 具体格式如下:
+
+```json
+{
+    "uid": 0,
+    "username": "User Username",
+    "nickname": "User Nickname",
+    "signature": "User Signature",
+    "email": "Email Address",
+    "phone": "Phone Number in E164 Format",
+    "emailVerified": true,
+    "phoneVerified": true,
+    "accountFrozen": false
+}
+```
+
+看完例子来看一下UserEntity的数据定义吧
+|键值|类型|可选|注释|
+|-|-|-|-|
+|uid|int|-|用户uid|
+|username|string|-|用户名|
+|nickname|?string|-|用户昵称(如果为空, 则null)|
+|signature|?string|-|用户签名(如果为空, 则null)|
+|email|?string|-|用户邮箱(如果没有绑定, 则null)|
+|phone|?string|-|用户手机, E164格式(如果没有绑定, 则null)|
+|emailVerified|bool|-|用户邮箱是否已验证|
+|phoneVerified|bool|-|用户手机是否已验证|
+|accountFrozen|bool|-|用户是否冻结|
+
+---
+**还是不懂?**   
+如果一个API返回了UserEntity, 如[登录功能](#1232-成功时定义), 则API返回值会如下所示(以登录功能为例)
+
+```json
+{
+    "errorCode": 0,
+    "data": {
+        "access_token": "xxxx",
+        "refresh_token": "xxx",
+        "access_expire": 11283901,
+        "refresh_expire": 12319890,
+        "user": {
+            "uid": 1,
+            "username": "toiletcommander",
+            "nickname": "老秋风",
+            "signature": "哇我爱糖糖, 糖糖怎么那么好看, 声音又好听",
+            "email": "windy@philosophysoftware.org",
+            "phone": "+86xxxxxxxxxxx",
+            "emailVerified": true,
+            "phoneVerified": true,
+            "accountFrozen": false
+        }
+    }
+}
+```
+
 ## 1.0 用户系统
 
 ### 1.1 注册用户
@@ -127,7 +192,7 @@
 #### 1.1.1 请求方式
 
 |HTTP Method|URL|成功HTTP Code|
-|-|-|-|-|
+|-|-|-|
 |POST|/user|201 CREATED|
 
 #### 1.1.2 参数
@@ -163,7 +228,7 @@
 #### 1.2.1 请求方式
 
 |HTTP Method|URL|成功HTTP Code|
-|-|-|-|-|
+|-|-|-|
 |GET|/vericodes/verifyEmailResult/`{{veriCode}}`|200 OK|
 
 #### 1.2.2 参数
@@ -192,7 +257,7 @@
 #### 1.3.1 请求方式
 
 |HTTP Method|URL|成功HTTP Code|
-|-|-|-|-|
+|-|-|-|
 |GET|/vericodes/verifyPhoneResult/`{{veriCode}}`|200 OK|
 
 #### 1.3.2 参数
@@ -221,7 +286,7 @@
 #### 1.4.1 请求方式
 
 |HTTP Method|URL|成功HTTP Code|
-|-|-|-|-|
+|-|-|-|
 |POST|/vericodes/sendAnotherVerifyEmailRequest|201 CREATED|
 
 #### 1.4.2 参数
@@ -243,7 +308,7 @@
 #### 1.5.1 请求方式
 
 |HTTP Method|URL|成功HTTP Code|
-|-|-|-|-|
+|-|-|-|
 |POST|/vericodes/sendAnotherVerifyPhoneRequest|201 CREATED|
 
 #### 1.5.2 参数
@@ -257,3 +322,66 @@
 成功时`dataKey-data`定义: 空
 
 成功时`rootKey-data`定义: 无特殊键值
+
+### 1.6 登录
+
+这个API用来让已验证用户登录并获取token
+
+---
+
+#### 1.2.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|POST|/user/token|201 CREATED|
+
+#### 1.2.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|username|?string|YES|登录用户名|YES|
+|email|?string|YES|登录邮箱|YES|
+|phone|?string|YES|登录手机号, 格式E164|YES|
+|password|string|-|密码|YES|
+
+注: `username`,`email`,`phone`选一样填就行了, 有且只有一项可以填(不然会按优先级`username`>`email`>`phone`来选一项查找账号)
+
+#### 1.2.3 返回值:
+
+##### 1.2.3.1 失败时定义
+
+`dataKey-data`定义: 无特殊键值
+
+`rootKey-data`定义: 
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|errorReason|int|-|登录错误原因|
+
+---
+
+**特殊情况**: 用户没有验证邮箱/手机返回:
+
+`dataKey-data`定义:
+|键值|类型|可选|注释|
+|-|-|-|-|
+|email|?string|YES|用户邮箱(如果用户有邮箱且没有验证)|
+|phone|?string|YES|用户手机(如果用户有手机且没有验证)|
+|uid|?int|YES|用户uid(如果用户有手机且没有验证)|
+
+`rootKey-data`定义: 继承[1.2.3.1 失败时定义](#1231-失败时定义)
+
+
+##### 1.2.3.2 成功时定义
+
+`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|access_token|string|-|用户登录凭据|
+|refresh_token|string|-|刷新凭据|
+|expire_time|int|-|登录凭据过期时间(UTC时间 Unix Timestamp)|
+|refresh_expire|int|-|刷新凭据过期时间(UTC时间 Unix Timestamp)|
+|user|`UserEntity`|-|用户详细信息|
+
+`rootKey-data`定义: 无特殊键值
