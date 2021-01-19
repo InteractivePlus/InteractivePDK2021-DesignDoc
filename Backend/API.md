@@ -390,6 +390,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 
 #### 1.5.3 返回值
 成功时`dataKey-data`定义: 
+
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
 |sent_method|int|-|验证码发送方式|YES|
@@ -629,6 +630,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |new_email|string|-|新邮件地址|YES|
 
 ##### 1.12.2.2 更改密保邮箱时参数
+
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
 |uid|int|YES|用户uid, 使用手机短验证码时使用|YES|
