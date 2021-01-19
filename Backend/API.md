@@ -188,6 +188,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 ```
 
 看完例子来看一下UserEntity的数据定义吧
+
 |键值|类型|可选|注释|
 |-|-|-|-|
 |uid|int|-|用户uid|
@@ -435,6 +436,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 **特殊情况**: 用户没有验证邮箱/手机返回:
 
 `dataKey-data`定义:
+
 |键值|类型|可选|注释|
 |-|-|-|-|
 |email|?string|YES|用户邮箱(如果用户有邮箱且没有验证)|
@@ -659,6 +661,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |new_phone|string|-|新手机号, E164格式|YES|
 
 ##### 1.13.2.2 更改密保手机时参数
+
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
 |uid|int|YES|用户uid, 使用手机短验证码时使用|YES|
@@ -707,6 +710,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 注: 如果用户没有验证账户或账户被冻结, 会返回`PERMISSION_DENIED`错误, 且`rootKey-data`会包含`errorReason`, 其值为[登录失败原因](#06-loginfailedreason登陆失败原因)之一.   
 
 成功时`dataKey-data`定义: 
+
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
 |sent_method|int|-|验证码发送方式|YES|
