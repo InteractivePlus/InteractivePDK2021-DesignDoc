@@ -12,45 +12,79 @@
     - [0.3 通用返回格式](#03-通用返回格式)
     - [0.4 API参数发送方式](#04-api参数发送方式)
     - [0.5 UserEntity定义](#05-userentity定义)
+    - [0.6 `LoginFailedReason`登陆失败原因](#06-loginfailedreason登陆失败原因)
+    - [0.7 服务端格式同步](#07-服务端格式同步)
   - [1.0 用户系统](#10-用户系统)
     - [1.1 注册用户](#11-注册用户)
       - [1.1.1 请求方式](#111-请求方式)
       - [1.1.2 参数](#112-参数)
-      - [1.1.3 返回值:](#113-返回值)
+      - [1.1.3 返回值](#113-返回值)
     - [1.2 验证邮箱](#12-验证邮箱)
       - [1.2.1 请求方式](#121-请求方式)
       - [1.2.2 参数](#122-参数)
-      - [1.2.3 返回值:](#123-返回值)
+      - [1.2.3 返回值](#123-返回值)
     - [1.3 验证手机](#13-验证手机)
       - [1.3.1 请求方式](#131-请求方式)
       - [1.3.2 参数](#132-参数)
-      - [1.3.3 返回值:](#133-返回值)
+      - [1.3.3 返回值](#133-返回值)
     - [1.4 请求邮箱验证重发](#14-请求邮箱验证重发)
       - [1.4.1 请求方式](#141-请求方式)
       - [1.4.2 参数](#142-参数)
-      - [1.4.3 返回值:](#143-返回值)
+      - [1.4.3 返回值](#143-返回值)
     - [1.5 请求手机验证重发](#15-请求手机验证重发)
       - [1.5.1 请求方式](#151-请求方式)
       - [1.5.2 参数](#152-参数)
-      - [1.5.3 返回值:](#153-返回值)
+      - [1.5.3 返回值](#153-返回值)
     - [1.6 登录](#16-登录)
       - [1.6.1 请求方式](#161-请求方式)
       - [1.6.2 参数](#162-参数)
-      - [1.6.3 返回值:](#163-返回值)
+      - [1.6.3 返回值](#163-返回值)
         - [1.6.3.1 失败时定义](#1631-失败时定义)
         - [1.6.3.2 成功时定义](#1632-成功时定义)
     - [1.7 验证token](#17-验证token)
       - [1.7.1 请求方式](#171-请求方式)
       - [1.7.2 参数](#172-参数)
-      - [1.7.3 返回值:](#173-返回值)
+      - [1.7.3 返回值](#173-返回值)
     - [1.8 刷新登录凭据](#18-刷新登录凭据)
       - [1.8.1 请求方式](#181-请求方式)
       - [1.8.2 参数](#182-参数)
-      - [1.8.3 返回值:](#183-返回值)
+      - [1.8.3 返回值](#183-返回值)
     - [1.9 登出](#19-登出)
-      - [1.8.1 请求方式](#181-请求方式-1)
-      - [1.8.2 参数](#182-参数-1)
-      - [1.8.3 返回值:](#183-返回值-1)
+      - [1.9.1 请求方式](#191-请求方式)
+      - [1.9.2 参数](#192-参数)
+      - [1.9.3 返回值](#193-返回值)
+    - [1.10 请求一个新的更改密保邮箱的验证码](#110-请求一个新的更改密保邮箱的验证码)
+      - [1.10.1 请求方式](#1101-请求方式)
+      - [1.10.2 参数](#1102-参数)
+      - [1.10.3 返回值](#1103-返回值)
+    - [1.11 请求一个新的更改密保手机的验证码](#111-请求一个新的更改密保手机的验证码)
+      - [1.11.1 请求方式](#1111-请求方式)
+      - [1.11.2 参数](#1112-参数)
+      - [1.11.3 返回值](#1113-返回值)
+    - [1.12 更改/添加密保邮箱](#112-更改添加密保邮箱)
+      - [1.12.1 请求方式](#1121-请求方式)
+      - [1.12.2 参数](#1122-参数)
+        - [1.12.2.1 添加密保邮箱时参数](#11221-添加密保邮箱时参数)
+        - [1.12.2.2 更改密保邮箱时参数](#11222-更改密保邮箱时参数)
+      - [1.12.3 返回值](#1123-返回值)
+    - [1.13 更改/添加密保手机](#113-更改添加密保手机)
+      - [1.13.1 请求方式](#1131-请求方式)
+      - [1.13.2 参数](#1132-参数)
+        - [1.13.2.1 添加密保手机时参数](#11321-添加密保手机时参数)
+        - [1.13.2.2 更改密保手机时参数](#11322-更改密保手机时参数)
+      - [1.13.3 返回值](#1133-返回值)
+    - [1.14 请求一个更改密码/忘记密码的验证码](#114-请求一个更改密码忘记密码的验证码)
+      - [1.14.1 请求方式](#1141-请求方式)
+      - [1.14.2 参数](#1142-参数)
+        - [1.14.2.1 更改密码参数](#11421-更改密码参数)
+        - [1.14.2.2 重设密码参数](#11422-重设密码参数)
+      - [1.14.3 返回值](#1143-返回值)
+    - [1.15 更改密码/重设密码](#115-更改密码重设密码)
+      - [1.15.1 请求方式](#1151-请求方式)
+      - [1.15.2 参数](#1152-参数)
+        - [1.15.2.1 更改密码参数](#11521-更改密码参数)
+        - [1.15.2.2 重设密码参数](#11522-重设密码参数)
+      - [1.15.3 返回值](#1153-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -193,6 +227,29 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 }
 ```
 
+### 0.6 `LoginFailedReason`登陆失败原因
+见[PDK-2021CoreLib中LoginFailedReasons.php](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/User/Login/LoginFailedReasons.php)
+
+|FAILED_REASON|登陆失败原因|id|
+|-|-|-|
+|EMAIL_NOT_VERIFIED|邮箱未验证|1|
+|PHONE_NOT_VERIFIED|手机未验证|2|
+|EITHER_NOT_VERIFIED|同时绑定了邮箱和手机, 没有任何一个验证了|3|
+|ACCOUNT_FROZEN|用户被冻结|4|
+|UNKNOWN|未知原因|5|
+
+### 0.7 服务端格式同步
+因为PDK2021的可配置性, 许多变量的格式在不同的部署实例中是不同的, 要了解具体什么需要配置, 请参照下面的链接.
+
+**强烈建议在实现前端时将`UserSystemFormatSetting`写成一个可以更改的类文件**
+
+- [VeriCodeFormat / 验证码格式定义, 定长32个字符(base16)](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/Communication/VerificationCode/VeriCodeFormat.php)
+  - 注: 手机验证码定长6个字符, 虽然字符数少了但是请求时需要带上`uid`
+- [TokenFormat / 登录凭据和刷新凭据定义, 定长32个字符(base16)](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/User/Formats/TokenFormat.php)
+- [PasswordHash / 密码哈希, 定长64个字符(base16, SHA256)](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/User/Formats/TokenFormat.php)
+- [UserSystemFormatSetting / 用户系统可变定义](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/User/UserSystemFormatSetting.php)
+- [UserSystemFormatSetting / 用户系统可变定义服务端实现,见`USER_SYSTEM_CONSTRAINTS`](https://github.com/InteractivePlus/PDK2021-Wrapper/blob/main/src/Config_template.php)
+
 ## 1.0 用户系统
 
 ### 1.1 注册用户
@@ -218,7 +275,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 
 **注意**: email和phone必填一项
 
-#### 1.1.3 返回值:
+#### 1.1.3 返回值
 成功时`dataKey-data`定义:
 
 |键值|类型|可选|注释|
@@ -249,7 +306,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |-|-|-|-|-|
 |veriCode|string|-|请填入URL中|YES|
 
-#### 1.2.3 返回值:
+#### 1.2.3 返回值
 成功时`dataKey-data`定义:
 
 |键值|类型|可选|注释|
@@ -279,7 +336,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |uid|int|-|新注册用户的uid([注册](#113-返回值) 登录失败时也会提供)|YES|
 |veriCode|string|-|填入URL|YES|
 
-#### 1.3.3 返回值:
+#### 1.3.3 返回值
 成功时`dataKey-data`定义:
 
 |键值|类型|可选|注释|
@@ -307,7 +364,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |-|-|-|-|-|
 |email|string|-|邮箱地址|YES|
 
-#### 1.4.3 返回值:
+#### 1.4.3 返回值
 成功时`dataKey-data`定义: 空
 
 成功时`rootKey-data`定义: 无特殊键值
@@ -330,8 +387,11 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |phone|string|-|手机号, E164格式|YES|
 |preferred_send_method|int|YES|偏好发送方式(`SMS_MESSAGE`/`PHONE_CALL`)|YES|
 
-#### 1.5.3 返回值:
-成功时`dataKey-data`定义: 空
+#### 1.5.3 返回值
+成功时`dataKey-data`定义: 
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|sent_method|int|-|验证码发送方式|YES|
 
 成功时`rootKey-data`定义: 无特殊键值
 
@@ -358,7 +418,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 
 注: `username`,`email`,`phone`选一样填就行了, 有且只有一项可以填(不然会按优先级`username`>`email`>`phone`来选一项查找账号)
 
-#### 1.6.3 返回值:
+#### 1.6.3 返回值
 
 ##### 1.6.3.1 失败时定义
 
@@ -416,7 +476,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |uid|int|-|用户uid, 填入URL|YES|
 |access_token|string|-|登录凭据, 填入URL|YES|
 
-#### 1.7.3 返回值:
+#### 1.7.3 返回值
 成功时`dataKey-data`定义: 空
 
 成功时`rootKey-data`定义: 无特殊键值
@@ -439,7 +499,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |uid|int|-|用户uid, 填入URL|YES|
 |refresh_token|string|-|刷新凭据|YES|
 
-#### 1.8.3 返回值:
+#### 1.8.3 返回值
 成功时`dataKey-data`定义: 
 
 |键值|类型|可选|注释|
@@ -460,20 +520,234 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 
 ---
 
-#### 1.8.1 请求方式
+#### 1.9.1 请求方式
 
 |HTTP Method|URL|成功HTTP Code|
 |-|-|-|
 |DELETE|/user/{{uid}}/token/{{access_token}}|204 NO CONTENT|
 
-#### 1.8.2 参数
+#### 1.9.2 参数
 
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
 |uid|int|-|用户uid, 填入URL|YES|
 |access_token_token|string|-|登录凭据, 填入URL|YES|
 
-#### 1.8.3 返回值:
+#### 1.9.3 返回值
 
 **只有失败时才有返回值**, 如果成功返回值一定是空的
 
+### 1.10 请求一个新的更改密保邮箱的验证码
+
+这个API用来让已经绑定密保邮箱的用户更改密保邮箱
+
+---
+
+#### 1.10.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|POST|/vericodes/changeEmailAddrRequest|201 CREATED|
+
+#### 1.10.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid|YES|
+|access_token|string|-|登录凭据|YES|
+|new_email|string|-|新邮件地址|YES|
+|preferred_send_method|int|YES|偏好发送方式(`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`)|YES|
+
+#### 1.10.3 返回值
+
+注: 如果用户没有绑定邮箱, 则会返回错误代码`PERMISSION_DENIED`   
+
+成功时`dataKey-data`定义: 
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|sent_method|int|-|验证码发送方式|YES|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+### 1.11 请求一个新的更改密保手机的验证码
+
+这个API用来让已经绑定密保手机的用户更改密保邮箱
+
+---
+
+#### 1.11.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|POST|/vericodes/changePhoneNumberRequest|201 CREATED|
+
+#### 1.11.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid|YES|
+|access_token|string|-|登录凭据|YES|
+|new_phone|string|-|新手机号码, E164格式|YES|
+|preferred_send_method|int|YES|偏好发送方式(`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`)|YES|
+
+#### 1.11.3 返回值
+
+注: 如果用户没有绑定手机, 则会返回错误代码`PERMISSION_DENIED`   
+
+成功时`dataKey-data`定义: 
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|sent_method|int|-|验证码发送方式|YES|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+
+### 1.12 更改/添加密保邮箱
+
+这个API用来让已经绑定密保邮箱/没有绑定密保邮箱的用户更改/添加密保邮箱
+
+---
+
+#### 1.12.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|PATCH|/user/email|200 OK|
+
+#### 1.12.2 参数
+
+##### 1.12.2.1 添加密保邮箱时参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid|YES|
+|access_token|string|-|登录凭据|YES|
+|new_email|string|-|新邮件地址|YES|
+
+##### 1.12.2.2 更改密保邮箱时参数
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|YES|用户uid, 使用手机短验证码时使用|YES|
+|veriCode|string|-|验证码, 从[1.10](#110-请求一个新的更改密保邮箱的验证码)|YES|
+
+#### 1.12.3 返回值
+成功时`dataKey-data`定义: 无特殊键值
+
+成功时`rootKey-data`定义: 无特殊键值
+
+### 1.13 更改/添加密保手机
+
+这个API用来让已经绑定密保手机/没有绑定密保手机的用户更改/添加密保手机
+
+---
+#### 1.13.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|PATCH|/user/phoneNum|200 OK|
+
+#### 1.13.2 参数
+
+##### 1.13.2.1 添加密保手机时参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid|YES|
+|access_token|string|-|登录凭据|YES|
+|new_phone|string|-|新手机号, E164格式|YES|
+
+##### 1.13.2.2 更改密保手机时参数
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|YES|用户uid, 使用手机短验证码时使用|YES|
+|veriCode|string|-|验证码, 从[1.11](#111-请求一个新的更改密保手机的验证码)获得|YES|
+
+#### 1.13.3 返回值
+
+成功时`dataKey-data`定义: 无特殊键值
+
+成功时`rootKey-data`定义: 无特殊键值
+
+### 1.14 请求一个更改密码/忘记密码的验证码
+这个API用来让用户请求更改密码/重设密码
+
+---
+
+#### 1.14.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|POST|/vericodes/changePasswordRequest|201 CREATED|
+
+#### 1.14.2 参数
+
+##### 1.14.2.1 更改密码参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid|YES|
+|access_token|string|-|登录凭据|YES|
+|preferred_send_method|int|-|验证码发送偏好`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`|YES|
+
+##### 1.14.2.2 重设密码参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|email|string|YES|申请密码重设的邮箱|YES|
+|phone|string|YES|申请密码重设的手机, E164格式|YES|
+|username|string|YES|申请密码重设的用户名|YES|
+|preferred_send_method|int|-|验证码发送偏好`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`|YES|
+
+注: `email`, `phone`, `username`其中必填且只能填一个.
+
+#### 1.14.3 返回值
+
+注: 如果用户没有验证账户或账户被冻结, 会返回`PERMISSION_DENIED`错误, 且`rootKey-data`会包含`errorReason`, 其值为[登录失败原因](#06-loginfailedreason登陆失败原因)之一.   
+
+成功时`dataKey-data`定义: 
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|sent_method|int|-|验证码发送方式|YES|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+### 1.15 更改密码/重设密码
+这个API用来让用户更改密码/重设密码
+
+---
+
+#### 1.15.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|PATCH|/user/password|200 OK|
+
+#### 1.15.2 参数
+
+##### 1.15.2.1 更改密码参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|YES|用户uid, 使用手机验证码时填写|YES|
+|veriCode|string|-|验证码|YES|
+|new_password|string|-|新密码|YES|
+
+##### 1.15.2.2 重设密码参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|username|string|YES|用户名|YES|
+|email|string|YES|邮箱|YES|
+|phone|string|YES|手机, E164格式|YES|
+|veriCode|string|-|验证码|YES|
+|new_password|string|-|新密码|YES|
+
+注: 当使用手机验证码时,`email`, `phone`, `username`其中必填且只能填一个.
+
+#### 1.15.3 返回值
+
+成功时`dataKey-data`定义: 无特殊键值
+
+成功时`rootKey-data`定义: 无特殊键值
