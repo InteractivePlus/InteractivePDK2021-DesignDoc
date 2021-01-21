@@ -14,6 +14,7 @@
     - [0.5 UserEntity定义](#05-userentity定义)
     - [0.6 `LoginFailedReason`登陆失败原因](#06-loginfailedreason登陆失败原因)
     - [0.7 服务端格式同步](#07-服务端格式同步)
+    - [0.8 验证码系统](#08-验证码系统)
   - [1.0 用户系统](#10-用户系统)
     - [1.1 注册用户](#11-注册用户)
       - [1.1.1 请求方式](#111-请求方式)
@@ -256,6 +257,16 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 - [UserSystemFormatSetting / 用户系统可变定义](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/User/UserSystemFormatSetting.php)
 - [UserSystemFormatSetting / 用户系统可变定义服务端实现,见`USER_SYSTEM_CONSTRAINTS`](https://github.com/InteractivePlus/PDK2021-Wrapper/blob/main/src/Config_template.php)
 
+### 0.8 验证码系统
+
+验证码系统后端设计时已尽量减少耦合, 下面是验证码系统的交互逻辑
+
+1. 前端从验证码API申请一个验证码,获取`captcha_id`, `captcha_data`和`expire_time`, 其中`captcha_id`是一个定长为32个字符的随机字符串, `captcha_data`是和验证码系统后端实现有关的提供给前端的验证码数据(图片, 或极验id等等), `expire_time`是验证码过期时间, 代表用户需要提交表单的时间(UTC)
+2. 前端在用户填写完验证码后调用验证码验证API, 此API用来检查用户输入的验证码是否正确, 如果正确, 则API会将验证码标记为已验证
+3. 前端在用户填写完表单后调用特定表单API, 附上验证码的captcha_id, 后端验证验证码是否已经过期以及验证码是否已被标记为已验证
+
+不同的验证码系统拥有不同的API, 如果您想使用内置的SimpleCaptcha, 您可以[参阅文档](SimpleCaptchaAPI.md)
+
 ## 1.0 用户系统
 
 ### 1.1 注册用户
@@ -278,6 +289,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |password|string|-|密码|YES|
 |email|string|YES|邮箱|YES|
 |phone|string|YES|手机号, 需要用E164格式化(+86xxxxxxxxxxx)|YES|
+|captcha_id|string|-|验证码ID|YES|
 
 **注意**: email和phone必填一项
 
@@ -369,6 +381,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
 |email|string|-|邮箱地址|YES|
+|captcha_id|string|-|验证码ID|YES|
 
 #### 1.4.3 返回值
 成功时`dataKey-data`定义: 空
@@ -392,6 +405,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |-|-|-|-|-|
 |phone|string|-|手机号, E164格式|YES|
 |preferred_send_method|int|YES|偏好发送方式(`SMS_MESSAGE`/`PHONE_CALL`)|YES|
+|captcha_id|string|-|验证码ID|YES|
 
 #### 1.5.3 返回值
 成功时`dataKey-data`定义: 
@@ -422,6 +436,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |email|?string|YES|登录邮箱|YES|
 |phone|?string|YES|登录手机号, 格式E164|YES|
 |password|string|-|密码|YES|
+|captcha_id|string|-|验证码ID|YES|
 
 注: `username`,`email`,`phone`选一样填就行了, 有且只有一项可以填(不然会按优先级`username`>`email`>`phone`来选一项查找账号)
 
@@ -709,6 +724,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |phone|string|YES|申请密码重设的手机, E164格式|YES|
 |username|string|YES|申请密码重设的用户名|YES|
 |preferred_send_method|int|-|验证码发送偏好`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`|YES|
+|captcha_id|string|-|验证码ID|YES|
 
 注: `email`, `phone`, `username`其中必填且只能填一个.
 

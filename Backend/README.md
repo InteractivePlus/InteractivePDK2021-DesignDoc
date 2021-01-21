@@ -6,3 +6,4 @@
 ## 列表
 - [核心库文档](CoreLib.md)
 - [API文档](API.md)
+- [简单验证码文档](SimpleCaptchaAPI.md)
