@@ -1,6 +1,6 @@
 # InteractivePDK2021-DesignDoc
 
- Note: 此文档是在[InteractivePDK2020-DesignDoc](https://github.com/InteractivePlus/InteractivePDK2020-DesignDoc/)基础上进行修正和删改的新版标准文档.   
+ Note: 此文档是在[InteractivePDK2019-DesignDoc](https://github.com/InteractivePlus/InteractivePDK2019-DesignDoc/)基础上进行修正和删改的新版标准文档.   
  本文档用于标准化InteractivePDK2021并尽可能的减少多程序员协作时造成的歧义.   
 
 ## 分支与进度
