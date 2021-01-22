@@ -78,6 +78,8 @@
 
 将`{{jpegBase64}}`替换为实际数据即可.
 
+调试接口时可以使用[Github上的这个Base64图片查看器](https://jaredwinick.github.io/base64-image-viewer/)
+
 成功时`rootKey-data`定义: 无特殊键值
 
 ### 1.2 提交验证码
@@ -97,7 +99,7 @@
 |参数|类型|可选|注释|
 |-|-|-|-|-|
 |captcha_id|string|-|填入URL|
-|phrase|string|-|用户填写的验证码|
+|phrase|string|-|用户填写的验证码, 无需区分大小写|
 
 
 #### 1.2.3 返回值
