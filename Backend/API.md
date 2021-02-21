@@ -15,6 +15,8 @@
     - [0.6 `LoginFailedReason`登陆失败原因](#06-loginfailedreason登陆失败原因)
     - [0.7 服务端格式同步](#07-服务端格式同步)
     - [0.8 验证码系统](#08-验证码系统)
+    - [0.9 APP类型定义](#09-app类型定义)
+    - [0.10 APPEntity定义](#010-appentity定义)
   - [1.0 用户系统](#10-用户系统)
     - [1.1 注册用户](#11-注册用户)
       - [1.1.1 请求方式](#111-请求方式)
@@ -91,6 +93,11 @@
       - [1.16.2 参数](#1162-参数)
         - [1.16.2.1 更改密码参数](#11621-更改密码参数)
       - [1.16.3 返回值](#1163-返回值)
+  - [2.0 第三方OAuth APP系统](#20-第三方oauth-app系统)
+    - [2.1 注册APP](#21-注册app)
+      - [2.1.1 请求方式](#211-请求方式)
+      - [2.1.2 参数](#212-参数)
+      - [2.1.3 返回值](#213-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -256,6 +263,10 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 - [PasswordHash / 密码哈希, 定长64个字符(base16, SHA256)](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/User/Formats/TokenFormat.php)
 - [UserSystemFormatSetting / 用户系统可变定义](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/User/UserSystemFormatSetting.php)
 - [UserSystemFormatSetting / 用户系统可变定义服务端实现,见`USER_SYSTEM_CONSTRAINTS`](https://github.com/InteractivePlus/PDK2021-Wrapper/blob/main/src/Config_template.php)
+- [APPFormat / APP系统定义, client_id, client_secret定长40个字符, access_token, refresh_token, auth_code定长32个字符, code_challenge(s256)定长64字符](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/APP/Formats/APPFormat.php)
+- [MaskIDFormat / MaskID定义, mask_id定长32个字符, display_name定长20个字符](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/APP/Formats/APPFormat.php)
+- [APPSystemFormatSetting / APP系统可变定义](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/APP/APPSystemFormatSetting.php)
+- [APPSystemFormatSetting / APP系统可变定义服务端实现,见`APP_SYSTEM_FORMAT_CONSTRAINTS`](https://github.com/InteractivePlus/PDK2021-Wrapper/blob/main/src/Config_template.php)
 
 ### 0.8 验证码系统
 
@@ -266,6 +277,66 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 3. 前端在用户填写完表单后调用特定表单API, 附上验证码的captcha_id, 后端验证验证码是否已经过期以及验证码是否已被标记为已验证
 
 不同的验证码系统拥有不同的API, 如果您想使用内置的SimpleCaptcha, 您可以[参阅文档](SimpleCaptchaAPI.md)
+
+### 0.9 APP类型定义
+见[PDK-2021CoreLib中PDKAPPType.php](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/APP/APPInfo/PDKAPPType.php)
+
+|APP_TYPE|APP类型|id|
+|-|-|-|
+|HAS_BACKEND|有后端(申请OAuth Access_Token时需要提供APPSecret, 无需PKCE)|1|
+|NO_BACKEND|无后端(申请OAuth Access_Token时不用提供APPSecret, 需要PKCE)|2|
+|EITHER|两者混合(可以选择有后端或无后端模式进行交互)|3|
+
+### 0.10 APPEntity定义
+APPEntity经常在API中作为一个数据类型被返回, 实际APPEntity也是一个JSON Object, 具体格式如下:
+
+```json
+{
+    "appuid": 0,
+    "display_name": "APP Display Name",
+    "client_id": "APP Client ID",
+    "client_secret": "APP Client Secret",
+    "client_type": 1,
+    "redirectURI": "https://localhost/",
+    "create_time": 0,
+    "owner_uid": 0
+}
+```
+
+看完例子来看一下UserEntity的数据定义吧
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|appuid|int|-|APP的uid|
+|display_name|string|-|APP展示名称|
+|client_id|string|-|APP OAuth client_id|
+|client_secret|string|-|APP OAuth client_secret|
+|client_type|int|-|APP类型,见[0.9 APP类型定义](#09-app类型定义)|
+|redirectURI|string|-|OAuth授权成功回调地址|
+|create_time|int|-|创建时间|
+|owner_uid|int|-|APP拥有者用户uid|
+
+---
+**还是不懂?**   
+如果一个API返回了APPEntity, 如[创建APP](#21-注册app), 则API返回值会如下所示(以登录功能为例)
+
+```json
+{
+    "errorCode": 0,
+    "data": {
+        "app": {
+            "appuid": 0,
+            "display_name": "Readin",
+            "client_id": "WJIISMJWIJIJDSIWJIDJIWJI(40 Chars)",
+            "client_secret": "JWIMZNWBDJWHSMDBWJSMWJDGZTYWUDMDGWBS(40 Chars)",
+            "client_type": 1,
+            "redirectURI": "https://localhost/",
+            "create_time": 1159000,
+            "owner_uid": 2
+        }
+    }
+}
+```
 
 ## 1.0 用户系统
 
@@ -811,5 +882,37 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
 |user|`UserEntity`|-|用户信息|YES|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+## 2.0 第三方OAuth APP系统
+
+### 2.1 注册APP
+
+这个API用来让已登录形随意动用户注册APP
+
+---
+
+#### 2.1.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|POST|/apps/{display_name}|201 CREATED|
+
+#### 2.1.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid|-|
+|access_token|string|-|用户登录凭据|YES|
+|display_name|string|-|APP展示名称, 填入URL|YES|
+|client_type|int|-|APP类型, 见[0.9 APP类型定义](#09-app类型定义)|YES|
+
+#### 2.1.3 返回值
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|app|[APPEntity](#010-appentity定义)|-|所有关于新建APP的信息|
 
 成功时`rootKey-data`定义: 无特殊键值
