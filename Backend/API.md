@@ -129,7 +129,8 @@
 |ITEM_ALREADY_EXIST_ERROR|储存系统中已经有指定请求参数(邮件重复, 电话号码重复等等)|11|item|
 |ITEM_EXPIRED_OR_USED_ERROR|此请求参数已经被使用(token, 验证码等)|12|item|
 |PERMISSION_DENIED|权限禁止|13|-|
-|CREDENTIAL_NOT_MATCH|用户凭据不正确(密码错误, token错误等)|20|credential|
+|CREDENTIAL_NOT_MATCH|用户凭据不正确(密码错误, token错误等)|14|credential|
+|REQUEST_PARAM_FORMAT_ERROR|此请求参数格式错误|20|errorParam|
 
 ### 0.3 通用返回格式
 
