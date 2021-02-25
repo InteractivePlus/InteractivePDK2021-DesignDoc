@@ -98,6 +98,10 @@
       - [2.1.1 请求方式](#211-请求方式)
       - [2.1.2 参数](#212-参数)
       - [2.1.3 返回值](#213-返回值)
+    - [2.2 列出已有APP](#22-列出已有app)
+      - [2.2.1 请求方式](#221-请求方式)
+      - [2.2.2 参数](#222-参数)
+      - [2.2.3 返回值](#223-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -916,3 +920,64 @@ APPEntity经常在API中作为一个数据类型被返回, 实际APPEntity也是
 |app|[APPEntity](#010-appentity定义)|-|所有关于新建APP的信息|
 
 成功时`rootKey-data`定义: 无特殊键值
+
+### 2.2 列出已有APP
+
+这个API用来让已登录形随意动用户列出自己已有的APP
+
+---
+
+#### 2.2.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|GET|/user/{uid}/apps|200 OK|
+
+#### 2.2.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid, 填入URL|-|
+|access_token|string|-|用户登录凭据|YES|
+
+#### 2.2.3 返回值
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|apps|Array([APPEntity](#010-appentity定义))|-|所有APP的信息的列表|
+
+正常返回例子:
+
+```json
+{
+    "errorCode": 0,
+    "data": {
+        "apps": [
+            {
+                "appuid": 1,
+                "display_name": "测试程序1",
+                "client_id": "b41169f3c1c058863a1f3223ebbc898423f5b827",
+                "client_secret": "a03c3e054bd79ad1a2a58d7421f0fbaa953e5c7d",
+                "client_type": 3,
+                "redirectURI": "",
+                "create_time": 1613896746,
+                "owner_uid": 23
+            },
+            {
+                "appuid": 2,
+                "display_name": "测试程序2",
+                "client_id": "b41169f3c1c058863a1f3223ebbc898423f5b827",
+                "client_secret": "a03c3e054bd79ad1a2a58d7421f0fbaa953e5c7d",
+                "client_type": 3,
+                "redirectURI": "",
+                "create_time": 1613896746,
+                "owner_uid": 23
+            }
+        ]
+    }
+}
+```
+
+成功时`rootKey-data`定义: 无特殊键值
+
