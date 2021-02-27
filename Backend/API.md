@@ -102,6 +102,14 @@
       - [2.2.1 请求方式](#221-请求方式)
       - [2.2.2 参数](#222-参数)
       - [2.2.3 返回值](#223-返回值)
+    - [2.3 请求删除APP验证码](#23-请求删除app验证码)
+      - [2.3.1 请求方式](#231-请求方式)
+      - [2.3.2 参数](#232-参数)
+      - [2.3.3 返回值](#233-返回值)
+    - [2.4 删除已有APP](#24-删除已有app)
+      - [2.4.1 请求方式](#241-请求方式)
+      - [2.4.2 参数](#242-参数)
+      - [2.4.3 返回值](#243-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -183,7 +191,7 @@
 |GET|URL?variable1=Val1&variable2=Val2|-|-|
 |POST|Request Body|json_encode(param_array)|-|
 |PATCH|Request Body|json_encode(param_array)|-|
-|DELETE|Request Body|json_encode(param_array)|如果成功删除资源, 返回值会为空, 请用HTTP Code来判断成功|
+|DELETE|Request Body|同GET|如果成功删除资源, 返回值会为空, 请用HTTP Code来判断成功|
 
 注: 如果API定义的URL中有`{{variableName}}`则用变量值替代`{{variableName}}`, 且请求体中无需再次包含变量.
 
@@ -982,3 +990,52 @@ APPEntity经常在API中作为一个数据类型被返回, 实际APPEntity也是
 
 成功时`rootKey-data`定义: 无特殊键值
 
+### 2.3 请求删除APP验证码
+
+这个API用来让已登录形随意动用户请求一个可以删除自己已有APP的验证码
+
+---
+
+#### 2.3.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|POST|/vericodes/deleteAPPRequest|201 CREATED|
+
+#### 2.3.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid|-|
+|access_token|string|-|用户登录凭据|YES|
+|preferred_send_method|`SEND_METHOD`|YES|偏好发送方式|YES|
+
+#### 2.3.3 返回值
+成功时`dataKey-data`定义: 无特殊键值
+
+成功时`rootKey-data`定义: 无特殊键值
+
+### 2.4 删除已有APP
+
+这个API用来让已登录形随意动用户, 且已经发送验证码, 删除自己已有的APP
+
+---
+
+#### 2.4.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|DELETE|/apps/{appuid}|204 NO CONTENT|
+
+#### 2.4.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid|-|
+|access_token|string|-|用户登录凭据|YES|
+|appuid|int|-|APPUID,填入URL|-|
+|veriCode|string|-|验证码|YES|
+
+#### 2.4.3 返回值
+
+成功时返回空数据, 请注意检查HTTP返回码.
