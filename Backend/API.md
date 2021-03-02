@@ -110,6 +110,14 @@
       - [2.4.1 请求方式](#241-请求方式)
       - [2.4.2 参数](#242-参数)
       - [2.4.3 返回值](#243-返回值)
+    - [2.5 请求APP重要操作验证码](#25-请求app重要操作验证码)
+      - [2.5.1 请求方式](#251-请求方式)
+      - [2.5.2 参数](#252-参数)
+      - [2.5.3 返回值](#253-返回值)
+    - [2.6 修改APP信息](#26-修改app信息)
+      - [2.6.1 请求方式](#261-请求方式)
+      - [2.6.2 参数](#262-参数)
+      - [2.6.3 返回值](#263-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -1039,3 +1047,84 @@ APPEntity经常在API中作为一个数据类型被返回, 实际APPEntity也是
 #### 2.4.3 返回值
 
 成功时返回空数据, 请注意检查HTTP返回码.
+
+### 2.5 请求APP重要操作验证码
+
+这个API用来让已登录形随意动用户请求一个可以进行APP重要操作的验证码(修改信息)
+
+---
+
+#### 2.5.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|POST|/vericodes/appImportantInformationRequest|201 CREATED|
+
+#### 2.5.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid|-|
+|access_token|string|-|用户登录凭据|YES|
+|preferred_send_method|`SEND_METHOD`|YES|偏好发送方式|YES|
+
+#### 2.5.3 返回值
+成功时`dataKey-data`定义: 无特殊键值
+
+成功时`rootKey-data`定义: 无特殊键值
+
+### 2.6 修改APP信息
+
+这个API用来让已登录形随意动用户, 且已经发送重要操作验证码, 修改自己已有的APP信息
+
+---
+
+#### 2.6.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|PATCH|/apps/{appuid}|200 OK|
+
+#### 2.6.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid,填入GET参数|-|
+|access_token|string|-|用户登录凭据, 填入GET参数|YES|
+|appuid|int|-|APPUID,填入URL|-|
+|veriCode|string|-|验证码,填入GET参数|YES|
+|display_name|string|YES|新APP展示名|YES|
+|client_secret|string|YES|是否要进行client_secret重置, 重置则此键值需为"reroll"|-|
+|client_type|int|YES|APP类型|YES|
+|redirectURI|?string|YES|回调地址, 如果没有此键则表示不更改, 如果此键为null表示清空redirectURI, 如果不为空则设为此键的值|-|
+
+
+#### 2.6.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|app|[APPEntity](#010-appentity定义)|-|APP的信息|
+
+正常返回例子:
+
+```json
+{
+  "errorCode": 0,
+  "data": {
+    "app": {
+      "appuid": 1,
+      "display_name": "测试程序1",
+      "client_id": "b41169f3c1c058863a1f3223ebbc898423f5b827",
+      "client_secret": "a03c3e054bd79ad1a2a58d7421f0fbaa953e5c7d",
+      "client_type": 3,
+      "redirectURI": "",
+      "create_time": 1613896746,
+      "owner_uid": 23
+    }
+  }
+}
+```
+
+成功时`rootKey-data`定义: 无特殊键值
