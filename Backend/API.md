@@ -95,6 +95,10 @@
       - [1.16.2 参数](#1162-参数)
         - [1.16.2.1 更改密码参数](#11621-更改密码参数)
       - [1.16.3 返回值](#1163-返回值)
+    - [1.17 列出已有面具](#117-列出已有面具)
+      - [1.17.1 请求方式](#1171-请求方式)
+      - [1.17.2 参数](#1172-参数)
+      - [1.17.3 返回值](#1173-返回值)
   - [2.0 第三方OAuth APP系统](#20-第三方oauth-app系统)
     - [2.1 注册APP](#21-注册app)
       - [2.1.1 请求方式](#211-请求方式)
@@ -219,7 +223,15 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
     "phone": "Phone Number in E164 Format",
     "emailVerified": true,
     "phoneVerified": true,
-    "accountFrozen": false
+    "accountFrozen": false,
+    "settings": {
+      "allowEmailNotifications": 2,
+      "allowSaleEmail": 2,
+      "allowSMSNotifications": 2,
+      "allowSaleEmail": 2,
+      "allowCallNotifications": 2,
+      "allowSaleCall": 2
+    }
 }
 ```
 
@@ -236,6 +248,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 |emailVerified|bool|-|用户邮箱是否已验证|
 |phoneVerified|bool|-|用户手机是否已验证|
 |accountFrozen|bool|-|用户是否冻结|
+|settings|[UserSettingEntity](#012-usersettingentity定义)|-|用户设置, 上一级为系统默认设置|
 
 ---
 **还是不懂?**   
@@ -258,7 +271,15 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
             "phone": "+86xxxxxxxxxxx",
             "emailVerified": true,
             "phoneVerified": true,
-            "accountFrozen": false
+            "accountFrozen": false,
+            "settings": {
+              "allowEmailNotifications": 2,
+              "allowSaleEmail": 2,
+              "allowSMSNotifications": 2,
+              "allowSaleEmail": 2,
+              "allowCallNotifications": 2,
+              "allowSaleCall": 2
+            }
         }
     }
 }
@@ -371,6 +392,14 @@ MaskID是用户在OAuth授权第三方APP时创建的面具, 可以视为一个�
     "uid": 32,
     "display_name": "形影",
     "createTime": 128930189023,
+    "settings": {
+      "allowEmailNotifications": 2,
+      "allowSaleEmail": 2,
+      "allowSMSNotifications": 2,
+      "allowSaleEmail": 2,
+      "allowCallNotifications": 2,
+      "allowSaleCall": 2
+    }
 }
 ```
 
@@ -383,6 +412,7 @@ MaskID是用户在OAuth授权第三方APP时创建的面具, 可以视为一个�
 |uid|int|-|用户uid|
 |display_name|string|-|面具提供给APP的用户昵称, 非唯一|
 |create_time|int|-|创建时间(EPOCH时间戳)|
+|settings|[UserSettingEntity](#012-usersettingentity定义)|-|面具设置(上一级为用户设置)|
 
 ### 0.12 UserSettingEntity定义
 UserSettingEntity是用户设置数据的抽象化实例. API通常在返回UserEntity和MaskIDEntity时返回UserSettingEntity, 在API返回UserSettingEntity实例数据时将以JSON格式返回, 具体格式如下:   
@@ -964,6 +994,37 @@ UserSettingEntity是用户设置数据的抽象化实例. API通常在返回User
 
 成功时`rootKey-data`定义: 无特殊键值
 
+### 1.17 列出已有面具
+
+这个API用来让已登录形随意动用户, 列出他们所拥有的指定(或所有)APP的面具.
+
+---
+
+#### 1.17.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|GET|/masks/{client_id}|200 OK|
+
+#### 1.17.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid,填入GET参数|-|
+|access_token|string|-|用户登录凭据, 填入GET参数|YES|
+|client_id|string|YES|指定APP的client_id|YES|
+
+
+#### 1.17.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|masks|Array([`MaskIDEntity`](#011-maskid定义))|-|搜索到的所有面具信息的数组|
+
+成功时`rootKey-data`定义: 无特殊键值
+
 ## 2.0 第三方OAuth APP系统
 
 ### 2.1 注册APP
@@ -1186,3 +1247,4 @@ UserSettingEntity是用户设置数据的抽象化实例. API通常在返回User
 ```
 
 成功时`rootKey-data`定义: 无特殊键值
+
