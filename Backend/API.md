@@ -17,6 +17,8 @@
     - [0.8 验证码系统](#08-验证码系统)
     - [0.9 APP类型定义](#09-app类型定义)
     - [0.10 APPEntity定义](#010-appentity定义)
+    - [0.11 MaskID定义](#011-maskid定义)
+    - [0.12 UserSettingEntity定义](#012-usersettingentity定义)
   - [1.0 用户系统](#10-用户系统)
     - [1.1 注册用户](#11-注册用户)
       - [1.1.1 请求方式](#111-请求方式)
@@ -324,7 +326,7 @@ APPEntity经常在API中作为一个数据类型被返回, 实际APPEntity也是
 }
 ```
 
-看完例子来看一下UserEntity的数据定义吧
+看完例子来看一下APPEntity的数据定义吧
 
 |键值|类型|可选|注释|
 |-|-|-|-|
@@ -358,6 +360,62 @@ APPEntity经常在API中作为一个数据类型被返回, 实际APPEntity也是
     }
 }
 ```
+
+### 0.11 MaskID定义
+MaskID是用户在OAuth授权第三方APP时创建的面具, 可以视为一个用户拥有的多个第三方APP账户. 在API返回MaskID实例数据时将以JSON格式返回, 具体格式如下:
+
+```json
+{
+    "mask_id": "xxxx",
+    "client_id": "xxxxxxxxxxxx",
+    "uid": 32,
+    "display_name": "形影",
+    "createTime": 128930189023,
+}
+```
+
+看完例子来看一下MaskID的数据定义吧
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|mask_id|string|-|唯一的mask_id, 用于区分不同的面具|
+|client_id|string|-|APP OAuth client_id|
+|uid|int|-|用户uid|
+|display_name|string|-|面具提供给APP的用户昵称, 非唯一|
+|create_time|int|-|创建时间(EPOCH时间戳)|
+
+### 0.12 UserSettingEntity定义
+UserSettingEntity是用户设置数据的抽象化实例. API通常在返回UserEntity和MaskIDEntity时返回UserSettingEntity, 在API返回UserSettingEntity实例数据时将以JSON格式返回, 具体格式如下:   
+
+**[SettingBoolean.php](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/User/Setting/SettingBoolean.php)** 我们首先定义, 在本JSON中所有键值皆为int, 且范围限定`SettingBoolean`如下:   
+
+|名称|整数值|含义|
+|-|-|-|
+|SET_YES|1|布尔值 True|
+|SET_NO|0|布尔值 False|
+|SET_INHERIT|2|继承上层/默认|
+
+```json
+{
+    "allowEmailNotifications": 2,
+    "allowSaleEmail": 2,
+    "allowSMSNotifications": 2,
+    "allowSaleEmail": 2,
+    "allowCallNotifications": 2,
+    "allowSaleCall": 2
+}
+```
+
+看完例子来看一下UserSettingEntity的数据定义吧
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|allowEmailNotifications|`SettingBoolean`|-|是否允许发送邮件通知|
+|allowSaleEmail|`SettingBoolean`|-|是否允许发送营销邮件|
+|allowSMSNotifications|`SettingBoolean`|-|是否允许发送短信通知|
+|allowSaleSMS|`SettingBoolean`|-|是否允许发送营销短信|
+|allowCallNotifications|`SettingBoolean`|-|是否允许电话语音通知|
+|allowSaleCall|`SettingBoolean`|-|是否允许营销电话|
 
 ## 1.0 用户系统
 
