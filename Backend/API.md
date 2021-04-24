@@ -988,9 +988,9 @@ UserSettingEntity是用户设置数据的抽象化实例. API通常在返回User
 |access_token|string|-|登录凭据|YES|
 |nickname|?string|YES|新昵称|YES|
 |signature|?string|YES|新签名|YES|
+|settings|`UserSettingEntity`|YES|新设置(部分)|YES|
 
-
-注: `nickname`和`signature`中必填一项, 可同时填写
+注: `nickname`,`signature`,和`settings`中必填一项, 可同时填写
 
 #### 1.16.3 返回值
 
