@@ -19,6 +19,7 @@
     - [0.10 APPEntity定义](#010-appentity定义)
     - [0.11 MaskID定义](#011-maskid定义)
     - [0.12 UserSettingEntity定义](#012-usersettingentity定义)
+    - [0.13 OAuthScope定义](#013-oauthscope定义)
   - [1.0 用户系统](#10-用户系统)
     - [1.1 注册用户](#11-注册用户)
       - [1.1.1 请求方式](#111-请求方式)
@@ -132,6 +133,11 @@
       - [2.6.1 请求方式](#261-请求方式)
       - [2.6.2 参数](#262-参数)
       - [2.6.3 返回值](#263-返回值)
+  - [3.0 OAuth前端用API](#30-oauth前端用api)
+    - [3.1 获取Auth_Code](#31-获取auth_code)
+      - [3.1.1 请求方式](#311-请求方式)
+      - [2.4.2 参数](#242-参数-1)
+      - [2.4.3 返回值](#243-返回值-1)
 
 ## 0.0 公共常数及API约定
 
@@ -454,6 +460,19 @@ UserSettingEntity是用户设置数据的抽象化实例. API通常在返回User
 |allowSaleSMS|`SettingBoolean`|-|是否允许发送营销短信|
 |allowCallNotifications|`SettingBoolean`|-|是否允许电话语音通知|
 |allowSaleCall|`SettingBoolean`|-|是否允许营销电话|
+
+### 0.13 OAuthScope定义
+OAuthScope是第三方APP在申请用户授权时指定的授权范围(也是用户选择授权时可以指定的授权范围). 具体格式如下:   
+
+**[OAuthScope.php](https://github.com/InteractivePlus/PDK2021-Wrapper/blob/main/src/OAuth/OAuthScopes.php)**
+
+
+|Scope|解释|授权范围|
+|-|-|-|
+|info|User Info|获取用户面具昵称, 和用户面具设置|
+|notifications|Send Notifications|给用户通过API发送提醒消息(可触达邮箱,SMS,手机电话)|
+|contact_sales|Send Sale Messages|给用户通过API发送营销信息(可触达邮箱, SMS, 手机电话)|
+
 
 ## 1.0 用户系统
 
@@ -1320,6 +1339,47 @@ UserSettingEntity是用户设置数据的抽象化实例. API通常在返回User
   }
 }
 ```
+
+成功时`rootKey-data`定义: 无特殊键值
+
+## 3.0 OAuth前端用API
+### 3.1 获取Auth_Code
+
+此API用于在APP申请Auth Code, 网页跳转到PDK用户系统前端, 用户选择授权的范围并点击授权后, PDK用户系统前端沟通后端发放AuthCode. 所有的重定向都在前端完成.
+
+---
+
+#### 3.1.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|GET|/authcode|200 OK|
+
+#### 2.4.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid|-|
+|access_token|string|-|用户登录凭据|YES|
+|mask_id|string|-|用户想要使用的面具id|YES|
+|client_id|string|-|当前授权的应用client_id|YES|
+|code_challenge|string|YES|当code_challenge_type不为NONE的时候可以填入|YES|
+|code_challenge_type|string|-|NONE \| SHA256 \| S256 \| PLAIN|YES|
+|scope|`OAuthScope`|-|必须有info|YES|
+|redirect_uri|string|-|回调地址, 需要和APP设置中符合. 回调时会在redirect_uri后填入`code=xxx&state=xxx`参数|-|
+|state|string|YES|CSRF保护参数, 回调时会原封不动返回|-|
+
+注: 
+后端会直接拼接参数列表到回调地址, 如果`redirect_uri`为`http://http://localhost:8080/?`, 则后端返回的`redirect`参数为`http://localhost:8080/?code=xxx&state=xxx`
+
+#### 2.4.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|redirect|string|-|回调地址, 前端可以直接将网页跳转到这个地址|
+|expires|int|-|UTC UNIX Timestamp过期时间, 其实没什么用|
 
 成功时`rootKey-data`定义: 无特殊键值
 
