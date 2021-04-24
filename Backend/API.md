@@ -99,6 +99,14 @@
       - [1.17.1 请求方式](#1171-请求方式)
       - [1.17.2 参数](#1172-参数)
       - [1.17.3 返回值](#1173-返回值)
+    - [1.18 添加面具](#118-添加面具)
+      - [1.18.1 请求方式](#1181-请求方式)
+      - [1.18.2 参数](#1182-参数)
+      - [1.18.3 返回值](#1183-返回值)
+    - [1.19 修改面具信息](#119-修改面具信息)
+      - [1.19.1 请求方式](#1191-请求方式)
+      - [1.19.2 参数](#1192-参数)
+      - [1.19.3 返回值](#1193-返回值)
   - [2.0 第三方OAuth APP系统](#20-第三方oauth-app系统)
     - [2.1 注册APP](#21-注册app)
       - [2.1.1 请求方式](#211-请求方式)
@@ -308,7 +316,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 - [UserSystemFormatSetting / 用户系统可变定义](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/User/UserSystemFormatSetting.php)
 - [UserSystemFormatSetting / 用户系统可变定义服务端实现,见`USER_SYSTEM_CONSTRAINTS`](https://github.com/InteractivePlus/PDK2021-Wrapper/blob/main/src/Config_template.php)
 - [APPFormat / APP系统定义, client_id, client_secret定长40个字符, access_token, refresh_token, auth_code定长32个字符, code_challenge(s256)定长64字符](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/APP/Formats/APPFormat.php)
-- [MaskIDFormat / MaskID定义, mask_id定长32个字符, display_name定长20个字符](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/APP/Formats/APPFormat.php)
+- [MaskIDFormat / MaskID定义, mask_id定长32个字符, display_name定长<=20个字符](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/APP/Formats/APPFormat.php)
 - [APPSystemFormatSetting / APP系统可变定义](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/APP/APPSystemFormatSetting.php)
 - [APPSystemFormatSetting / APP系统可变定义服务端实现,见`APP_SYSTEM_FORMAT_CONSTRAINTS`](https://github.com/InteractivePlus/PDK2021-Wrapper/blob/main/src/Config_template.php)
 
@@ -1005,6 +1013,7 @@ UserSettingEntity是用户设置数据的抽象化实例. API通常在返回User
 |HTTP Method|URL|成功HTTP Code|
 |-|-|-|
 |GET|/masks/{client_id}|200 OK|
+|GET|/masks|200 OK|
 
 #### 1.17.2 参数
 
@@ -1012,7 +1021,7 @@ UserSettingEntity是用户设置数据的抽象化实例. API通常在返回User
 |-|-|-|-|-|
 |uid|int|-|用户uid,填入GET参数|-|
 |access_token|string|-|用户登录凭据, 填入GET参数|YES|
-|client_id|string|YES|指定APP的client_id|YES|
+|client_id|string|YES|指定APP的client_id, 如果不指定则列出所有面具|YES|
 
 
 #### 1.17.3 返回值
@@ -1022,6 +1031,72 @@ UserSettingEntity是用户设置数据的抽象化实例. API通常在返回User
 |键值|类型|可选|注释|
 |-|-|-|-|
 |masks|Array([`MaskIDEntity`](#011-maskid定义))|-|搜索到的所有面具信息的数组|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+
+### 1.18 添加面具
+
+这个API用来让已登录形随意动用户, 对一个APPID添加面具.
+
+---
+
+#### 1.18.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|POST|/masks/{client_id}|201 CREATED|
+
+#### 1.18.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid,填入GET参数|-|
+|access_token|string|-|用户登录凭据, 填入GET参数|YES|
+|client_id|string|-|指定APP的client_id|YES|
+|display_name|string|-|新的面具展示名称|YES|
+|settings|`UserSettingEntity`(partial)|-|新的设置(可以只设置部分键值, 其他会默认继承用户设置)|YES|
+
+
+#### 1.18.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|mask|[`MaskIDEntity`](#011-maskid定义)|-|新建的面具的信息|
+
+### 1.19 修改面具信息
+
+这个API用来让已登录形随意动用户, 对一个面具进行修改.
+
+---
+
+#### 1.19.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|PATCH|/masks/{mask_id}|200 OK|
+
+#### 1.19.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|-|用户uid,填入GET参数|-|
+|access_token|string|-|用户登录凭据, 填入GET参数|YES|
+|client_id|string|-|指定APP的client_id|YES|
+|display_name|string|YES|新的面具展示名称|YES|
+|settings|`UserSettingEntity`(partial)|YES|新的设置(可以只设置部分键值, 其他会默认继承原本设置)|YES|
+
+注: 当`display_name`项为空(指在JSON数据中无此键值), 或`display_name`项键值为null, 则不更改原本的`display_name`, 但如果`display_name`为''或不为空, 则覆盖原本的展示名称
+
+#### 1.19.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|mask|[`MaskIDEntity`](#011-maskid定义)|-|修改后的面具的信息|
 
 成功时`rootKey-data`定义: 无特殊键值
 
