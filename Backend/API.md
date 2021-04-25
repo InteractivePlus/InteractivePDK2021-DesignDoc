@@ -140,10 +140,14 @@
       - [3.1.2 参数](#312-参数)
       - [3.1.3 返回值](#313-返回值)
   - [4.0 OAuth APP用API](#40-oauth-app用api)
-    - [4.1 获取访问令牌APPToken / access_code](#41-获取访问令牌apptoken--access_code)
+    - [4.1 获取访问令牌APPToken / access_token](#41-获取访问令牌apptoken--access_token)
       - [4.1.1 请求方式](#411-请求方式)
       - [4.1.2 参数](#412-参数)
       - [4.1.3 返回值](#413-返回值)
+    - [4.2 验证访问令牌](#42-验证访问令牌)
+      - [4.2.1 请求方式](#421-请求方式)
+      - [4.2.2 参数](#422-参数)
+      - [4.2.3 返回值](#423-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -1405,7 +1409,7 @@ OAuthScope是第三方APP在申请访问令牌时获取到的访问令牌, 具�
 成功时`rootKey-data`定义: 无特殊键值
 
 ## 4.0 OAuth APP用API
-### 4.1 获取访问令牌APPToken / access_code
+### 4.1 获取访问令牌APPToken / access_token
 
 此API用于在APP申请Auth Code后, 与后端申请获得access_token用
 
@@ -1435,3 +1439,35 @@ OAuthScope是第三方APP在申请访问令牌时获取到的访问令牌, 具�
 |token|`OAuthToken`|-|分配到的访问令牌|
 
 成功时`rootKey-data`定义: 无特殊键值
+
+### 4.2 验证访问令牌
+
+此API用于在APP申请Access Token后, 与后端沟通验证access_token可用性
+
+---
+
+#### 4.2.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|GET|/oauth_token/verified_status|200 OK|
+
+#### 4.2.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|access_token|string|-|访问令牌|YES|
+|client_id|string|-|APP的client_id|YES|
+|client_secret|string|YES|APP的client_secret, 仅当令牌使用SERVER方式授权获得的情况下需要提供|YES|
+|mask_id|string|YES|用户面具的mask_id|YES|
+
+#### 4.2.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|token|`OAuthToken`|-|当前访问令牌|
+
+成功时`rootKey-data`定义: 无特殊键值
+
