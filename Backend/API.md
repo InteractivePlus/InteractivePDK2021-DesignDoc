@@ -109,6 +109,10 @@
       - [1.19.1 请求方式](#1191-请求方式)
       - [1.19.2 参数](#1192-参数)
       - [1.19.3 返回值](#1193-返回值)
+    - [1.20 删除面具](#120-删除面具)
+      - [1.20.1 请求方式](#1201-请求方式)
+      - [1.20.2 参数](#1202-参数)
+      - [1.20.3 返回值](#1203-返回值)
   - [2.0 第三方OAuth APP系统](#20-第三方oauth-app系统)
     - [2.1 注册APP](#21-注册app)
       - [2.1.1 请求方式](#211-请求方式)
@@ -148,6 +152,10 @@
       - [4.2.1 请求方式](#421-请求方式)
       - [4.2.2 参数](#422-参数)
       - [4.2.3 返回值](#423-返回值)
+    - [4.3 刷新访问令牌](#43-刷新访问令牌)
+      - [4.3.1 请求方式](#431-请求方式)
+      - [4.3.2 参数](#432-参数)
+      - [4.3.3 返回值](#433-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -786,7 +794,7 @@ OAuthScope是第三方APP在申请访问令牌时获取到的访问令牌, 具�
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
 |uid|int|-|用户uid, 填入URL|YES|
-|access_token_token|string|-|登录凭据, 填入URL|YES|
+|access_token|string|-|登录凭据, 填入URL|YES|
 
 #### 1.9.3 返回值
 
@@ -1144,6 +1152,32 @@ OAuthScope是第三方APP在申请访问令牌时获取到的访问令牌, 具�
 
 成功时`rootKey-data`定义: 无特殊键值
 
+### 1.20 删除面具
+
+此API用于让已登录用户删除自己持有的面具.
+
+---
+
+#### 1.20.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|DELETE|/masks/{mask_id}|204 NO CONTENT|
+
+#### 1.20.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|mask_id|string|-|需要删除的面具ID, 填入URL|YES|
+|uid|int|-|用户uid|YES|
+|access_token|string|-|登录凭据|YES|
+
+注: DELETE方法的参数用JSON封装在请求体Request Body内
+
+#### 1.20.3 返回值
+
+**只有失败时才有返回值**, 如果成功返回值一定是空的
+
 ## 2.0 第三方OAuth APP系统
 
 ### 2.1 注册APP
@@ -1471,3 +1505,32 @@ OAuthScope是第三方APP在申请访问令牌时获取到的访问令牌, 具�
 
 成功时`rootKey-data`定义: 无特殊键值
 
+### 4.3 刷新访问令牌
+
+此API用于在APP的Access Token即将过期或已经过期(但刷新令牌没有过期), 与后端沟通刷新access_token
+
+---
+
+#### 4.3.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|GET|/oauth_token/refresh_result|200 OK|
+
+#### 4.3.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|refresh_token|string|-|刷新令牌|YES|
+|client_id|string|-|APP的client_id|YES|
+|client_secret|string|YES|APP的client_secret, 仅当access_token以SERVER grant形式获取时需要|YES|
+
+#### 4.3.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|token|`OAuthToken`|-|新的访问令牌|
+
+成功时`rootKey-data`定义: 无特殊键值
