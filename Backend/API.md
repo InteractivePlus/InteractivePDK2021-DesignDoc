@@ -161,6 +161,10 @@
       - [4.4.1 请求方式](#441-请求方式)
       - [4.4.2 参数](#442-参数)
       - [4.4.3 返回值](#443-返回值)
+    - [4.5 发送提醒/营销信息](#45-发送提醒营销信息)
+      - [4.5.1 请求方式](#451-请求方式)
+      - [4.5.2 参数](#452-参数)
+      - [4.5.3 返回值](#453-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -660,7 +664,7 @@ OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
 |phone|string|-|手机号, E164格式|YES|
-|preferred_send_method|int|YES|偏好发送方式(`SMS_MESSAGE`/`PHONE_CALL`)|YES|
+|preferred_send_method|`SENT_METHOD`|YES|偏好发送方式(`SMS_MESSAGE`/`PHONE_CALL`)|YES|
 |captcha_id|string|-|验证码ID|YES|
 
 #### 1.5.3 返回值
@@ -668,7 +672,7 @@ OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity
 
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
-|sent_method|int|-|验证码发送方式|YES|
+|sent_method|`SENT_METHOD`|-|验证码发送方式|YES|
 
 成功时`rootKey-data`定义: 无特殊键值
 
@@ -835,7 +839,7 @@ OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity
 |uid|int|-|用户uid|YES|
 |access_token|string|-|登录凭据|YES|
 |new_email|string|-|新邮件地址|YES|
-|preferred_send_method|int|YES|偏好发送方式(`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`)|YES|
+|preferred_send_method|`SENT_METHOD`|YES|偏好发送方式(`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`)|YES|
 
 #### 1.10.3 返回值
 
@@ -845,7 +849,7 @@ OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity
 
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
-|sent_method|int|-|验证码发送方式|YES|
+|sent_method|`SENT_METHOD`|-|验证码发送方式|YES|
 
 成功时`rootKey-data`定义: 无特殊键值
 
@@ -868,7 +872,7 @@ OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity
 |uid|int|-|用户uid|YES|
 |access_token|string|-|登录凭据|YES|
 |new_phone|string|-|新手机号码, E164格式|YES|
-|preferred_send_method|int|YES|偏好发送方式(`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`)|YES|
+|preferred_send_method|`SENT_METHOD`|YES|偏好发送方式(`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`)|YES|
 
 #### 1.11.3 返回值
 
@@ -878,7 +882,7 @@ OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity
 
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
-|sent_method|int|-|验证码发送方式|YES|
+|sent_method|`SENT_METHOD`|-|验证码发送方式|YES|
 
 成功时`rootKey-data`定义: 无特殊键值
 
@@ -970,7 +974,7 @@ OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity
 |-|-|-|-|-|
 |uid|int|-|用户uid|YES|
 |access_token|string|-|登录凭据|YES|
-|preferred_send_method|int|-|验证码发送偏好`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`|YES|
+|preferred_send_method|`SENT_METHOD`|-|验证码发送偏好`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`|YES|
 
 ##### 1.14.2.2 重设密码参数
 
@@ -979,7 +983,7 @@ OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity
 |email|string|YES|申请密码重设的邮箱|YES|
 |phone|string|YES|申请密码重设的手机, E164格式|YES|
 |username|string|YES|申请密码重设的用户名|YES|
-|preferred_send_method|int|-|验证码发送偏好`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`|YES|
+|preferred_send_method|`SENT_METHOD`|-|验证码发送偏好`EMAIL`/`SMS_MESSAGE`/`PHONE_CALL`|YES|
 |captcha_id|string|-|验证码ID|YES|
 
 注: `email`, `phone`, `username`其中必填且只能填一个.
@@ -992,7 +996,7 @@ OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity
 
 |参数|类型|可选|注释|格式同步|
 |-|-|-|-|-|
-|sent_method|int|-|验证码发送方式|YES|
+|sent_method|`SENT_METHOD`|-|验证码发送方式|YES|
 
 成功时`rootKey-data`定义: 无特殊键值
 
@@ -1576,5 +1580,37 @@ OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity
 |键值|类型|可选|注释|
 |-|-|-|-|
 |info|`OAuthUserInfo`|-|用户信息|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+### 4.5 发送提醒/营销信息
+
+此API用于在APP拥有Access Token时与后端交互向用户推送信息
+
+---
+
+#### 4.5.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|POST|/oauth_ability/notifications|201 CREATED|
+
+#### 4.5.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|access_token|string|-|APP的OAuth访问令牌|YES|
+|title|string|-|发送消息标题, 有字数限制|YES|
+|content|string|-|发送消息内容, 有字数限制|YES|
+|is_sales|bool|YES|是否是营销信息(true),不填或false则发送提醒消息|-|
+|preferred_send_methods|`SENT_METHOD`|YES|`EMAIL` \| `SMS_MESSAGE` \| `PHONE_CALL`|YES|
+
+#### 4.5.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|sent_method|`SENT_METHOD`|-|发送方式|
 
 成功时`rootKey-data`定义: 无特殊键值
