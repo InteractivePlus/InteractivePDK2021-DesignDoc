@@ -21,6 +21,7 @@
     - [0.12 UserSettingEntity定义](#012-usersettingentity定义)
     - [0.13 OAuthScope定义](#013-oauthscope定义)
     - [0.14 OAuthToken定义](#014-oauthtoken定义)
+    - [0.15 OAuthUserInfo定义](#015-oauthuserinfo定义)
   - [1.0 用户系统](#10-用户系统)
     - [1.1 注册用户](#11-注册用户)
       - [1.1.1 请求方式](#111-请求方式)
@@ -156,6 +157,10 @@
       - [4.3.1 请求方式](#431-请求方式)
       - [4.3.2 参数](#432-参数)
       - [4.3.3 返回值](#433-返回值)
+    - [4.4 获取用户基础信息](#44-获取用户基础信息)
+      - [4.4.1 请求方式](#441-请求方式)
+      - [4.4.2 参数](#442-参数)
+      - [4.4.3 返回值](#443-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -506,6 +511,17 @@ OAuthScope是第三方APP在申请访问令牌时获取到的访问令牌, 具�
 |refresh_expires|int|-|刷新令牌过期时间(UTC)|
 |mask_id|string|-|令牌所属面具id|
 |scope|array\[string\]|-|令牌授权范围|
+
+### 0.15 OAuthUserInfo定义
+
+OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity`](#011-maskid定义)的缩减版:      
+
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|mask_id|string|-|唯一的mask_id, 用于区分不同的面具|
+|display_name|string|-|面具提供给APP的用户昵称, 非唯一|
+|settings|[UserSettingEntity](#012-usersettingentity定义)|-|面具设置(上一级为用户设置)|
 
 ## 1.0 用户系统
 
@@ -1532,5 +1548,33 @@ OAuthScope是第三方APP在申请访问令牌时获取到的访问令牌, 具�
 |键值|类型|可选|注释|
 |-|-|-|-|
 |token|`OAuthToken`|-|新的访问令牌|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+### 4.4 获取用户基础信息
+
+此API用于在APP拥有Access Token时与后端交互获取用户信息
+
+---
+
+#### 4.4.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|GET|/oauth_ability/user_info|200 OK|
+
+#### 4.4.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|access_token|string|-|APP的OAuth访问令牌|YES|
+
+#### 4.4.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|info|`OAuthUserInfo`|-|用户信息|
 
 成功时`rootKey-data`定义: 无特殊键值
