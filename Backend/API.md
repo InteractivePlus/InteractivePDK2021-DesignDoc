@@ -20,6 +20,7 @@
     - [0.11 MaskID定义](#011-maskid定义)
     - [0.12 UserSettingEntity定义](#012-usersettingentity定义)
     - [0.13 OAuthScope定义](#013-oauthscope定义)
+    - [0.14 OAuthToken定义](#014-oauthtoken定义)
   - [1.0 用户系统](#10-用户系统)
     - [1.1 注册用户](#11-注册用户)
       - [1.1.1 请求方式](#111-请求方式)
@@ -138,6 +139,11 @@
       - [3.1.1 请求方式](#311-请求方式)
       - [3.1.2 参数](#312-参数)
       - [3.1.3 返回值](#313-返回值)
+  - [4.0 OAuth APP用API](#40-oauth-app用api)
+    - [4.1 获取访问令牌APPToken / access_code](#41-获取访问令牌apptoken--access_code)
+      - [4.1.1 请求方式](#411-请求方式)
+      - [4.1.2 参数](#412-参数)
+      - [4.1.3 返回值](#413-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -473,6 +479,21 @@ OAuthScope是第三方APP在申请用户授权时指定的授权范围(也是用
 |notifications|Send Notifications|给用户通过API发送提醒消息(可触达邮箱,SMS,手机电话)|
 |contact_sales|Send Sale Messages|给用户通过API发送营销信息(可触达邮箱, SMS, 手机电话)|
 
+### 0.14 OAuthToken定义
+OAuthScope是第三方APP在申请访问令牌时获取到的访问令牌, 具体格式如下:   
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|access_token|string|-|访问令牌字符串|
+|refresh_token|string|YES|刷新令牌, 用于在过期之前刷新访问令牌|
+|client_id|string|-|访问令牌所属APP client_id|
+|obtained_method|int|-|访问令牌获取方式, 0 = Server, 1 = PKCE|
+|issued|int|-|令牌创建时间(UTC)|
+|expires|int|-|令牌过期时间(UTC)|
+|last_renewed|int|-|令牌最后更新时间(UTC)|
+|refresh_expires|int|-|刷新令牌过期时间(UTC)|
+|mask_id|string|-|令牌所属面具id|
+|scope|array\[string\]|-|令牌授权范围|
 
 ## 1.0 用户系统
 
@@ -1383,3 +1404,34 @@ OAuthScope是第三方APP在申请用户授权时指定的授权范围(也是用
 
 成功时`rootKey-data`定义: 无特殊键值
 
+## 4.0 OAuth APP用API
+### 4.1 获取访问令牌APPToken / access_code
+
+此API用于在APP申请Auth Code后, 与后端申请获得access_token用
+
+---
+
+#### 4.1.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|POST|/oauth_token|201 CREATED|
+
+#### 4.1.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|code|string|-|APP获取到的Authorization Code|YES|
+|client_id|string|-|APP的client_id|YES|
+|client_secret|string|YES|APP的client_secret,如果使用PKCE授权, 则此项会被忽略, 可不填写|YES|
+|code_verifier|string|YES|只有PKCE时需要填写|-|
+
+#### 4.1.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|token|`OAuthToken`|-|分配到的访问令牌|
+
+成功时`rootKey-data`定义: 无特殊键值
