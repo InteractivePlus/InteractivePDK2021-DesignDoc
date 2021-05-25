@@ -1713,7 +1713,7 @@ TicketEntity是作为工单拓展系统中的工单结构体:
 |-|-|-|-|-|
 |uid|int|YES|用户uid, 使用前端token时使用|-|
 |access_token|string|-|前端/OAuth 登录凭据|-|
-|is_frontend_token|boolean|-|是否是前端token|-|
+|is_frontend_token|boolean|-|是否是前端token, 由于GET参数接受不到boolean值, 如果为OAuth Token可以考虑不带本参数|-|
 |mask_id|string|YES|使用前端token时的可选参数, 可指定列出特定面具ID的工单|-|
 |client_id|string|YES|使用前端token时的可选参数, 可指定列出特定APP的工单|-|
 
