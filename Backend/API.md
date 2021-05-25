@@ -22,6 +22,8 @@
     - [0.13 OAuthScope定义](#013-oauthscope定义)
     - [0.14 OAuthToken定义](#014-oauthtoken定义)
     - [0.15 OAuthUserInfo定义](#015-oauthuserinfo定义)
+    - [0.16 TicketResponse定义](#016-ticketresponse定义)
+    - [0.17 TicketEntity定义](#017-ticketentity定义)
   - [1.0 用户系统](#10-用户系统)
     - [1.1 注册用户](#11-注册用户)
       - [1.1.1 请求方式](#111-请求方式)
@@ -165,6 +167,15 @@
       - [4.5.1 请求方式](#451-请求方式)
       - [4.5.2 参数](#452-参数)
       - [4.5.3 返回值](#453-返回值)
+  - [5.0 工单系统API](#50-工单系统api)
+    - [5.1 新建工单](#51-新建工单)
+      - [5.1.1 请求方式](#511-请求方式)
+      - [5.1.2 参数](#512-参数)
+      - [5.1.3 返回值](#513-返回值)
+    - [5.2 列出工单](#52-列出工单)
+      - [5.2.1 请求方式](#521-请求方式)
+      - [5.2.2 参数](#522-参数)
+      - [5.2.3 返回值](#523-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -526,6 +537,38 @@ OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity
 |mask_id|string|-|唯一的mask_id, 用于区分不同的面具|
 |display_name|string|-|面具提供给APP的用户昵称, 非唯一|
 |settings|[UserSettingEntity](#012-usersettingentity定义)|-|面具设置(上一级为用户设置)|
+
+### 0.16 TicketResponse定义
+
+TicketResponse是作为工单拓展系统中使用的一个工单上的一条回复:      
+
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|is_creator_content|bool|-|此条回复是否是工单创建者的回复|
+|responder_name|string|-|回复者姓名, 如果是工单创建者的话此条为空|
+|responded|int|-|回复时间|
+|last_edited|int|-|回复修改时间|
+|content|string|-|回复内容|
+
+### 0.17 TicketEntity定义
+
+TicketEntity是作为工单拓展系统中的工单结构体:   
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|title|string|-|工单标题|
+|content_listing|array(`TicketResponse`)|-|一条一条的回复|
+|ticket_id|string|-|工单ID|
+|client_id|string|YES|APP对应的client_id, 如果提交对象为PDK, 则client_id为空, appuid为0|
+|appuid|int|YES|只有当client_id为空时APPUID固定为0, 其余时间不提供appuid|
+|uid|int|YES|只有当client_id为空时才有|
+|mask_id|string|YES|当client_id为空则mask_id为空|
+|access_token|string|YES|当client_id为空则access_token为空, 此项目是提交工单用的OAuth access_token, 回复工单用的token不会被记录|
+|is_urgent|bool|-|工单是否紧急|
+|created|int|-|工单创建时间|
+|last_updated|int|-|工单最后修改/回复时间|
+
 
 ## 1.0 用户系统
 
@@ -1612,5 +1655,75 @@ OAuthUserInfo是在第三方请求用户信息时提供, 是一个[`MaskIDEntity
 |键值|类型|可选|注释|
 |-|-|-|-|
 |sent_method|`SENT_METHOD`|-|发送方式|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+## 5.0 工单系统API
+
+### 5.1 新建工单
+
+此API让用户/OAuth用户对特定APP(包括PDK)提交工单
+
+---
+
+#### 5.1.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|POST|/tickets|201 CREATED|
+
+#### 5.1.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|title|string|-|工单标题|YES|
+|content|string|-|工单第一条回复内容|YES|
+|uid|int|YES|用户UID, 对PDK提交工单时提供|-|
+|access_token|string|-|前端/OAuth 登录凭证, 当给PDK提交工单时请使用前端登陆凭证|-|
+|is_frontend_token|boolean|-|登陆凭证是否是前端的?|-|
+|captcha_id|string|-|验证码ID|YES|
+
+
+#### 5.1.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|ticket|`TicketEntity`|-|新工单|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+
+### 5.2 列出工单
+
+此API让用户/OAuth用户列出自己所拥有的工单
+
+---
+
+#### 5.2.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|GET|/tickets|200 OK|
+
+#### 5.2.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|uid|int|YES|用户uid, 使用前端token时使用|-|
+|access_token|string|-|前端/OAuth 登录凭据|-|
+|is_frontend_token|boolean|-|是否是前端token|-|
+|mask_id|string|YES|使用前端token时的可选参数, 可指定列出特定面具ID的工单|-|
+|client_id|string|YES|使用前端token时的可选参数, 可指定列出特定APP的工单|-|
+
+
+#### 5.2.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|tickets|array(`TicketEntity`)|-|列出的工单|
 
 成功时`rootKey-data`定义: 无特殊键值
