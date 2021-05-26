@@ -176,6 +176,12 @@
       - [5.2.1 请求方式](#521-请求方式)
       - [5.2.2 参数](#522-参数)
       - [5.2.3 返回值](#523-返回值)
+    - [5.3 回复工单](#53-回复工单)
+      - [5.3.1 请求方式](#531-请求方式)
+      - [5.3.2 参数](#532-参数)
+        - [5.3.2.1 用户请求时参数](#5321-用户请求时参数)
+        - [5.3.2.2 APP请求时参数](#5322-app请求时参数)
+      - [5.3.3 返回值](#533-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -363,6 +369,8 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 - [MaskIDFormat / MaskID定义, mask_id定长32个字符, display_name定长<=20个字符](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/APP/Formats/APPFormat.php)
 - [APPSystemFormatSetting / APP系统可变定义](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/APP/APPSystemFormatSetting.php)
 - [APPSystemFormatSetting / APP系统可变定义服务端实现,见`APP_SYSTEM_FORMAT_CONSTRAINTS`](https://github.com/InteractivePlus/PDK2021-Wrapper/blob/main/src/Config_template.php)
+- [OAuthTicketFormatSetting / 工单系统可变定义](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/EXT_Ticket/OAuthTicketFormatSetting.php)
+- [OAuthTicketFormatSetting / 工单系统可变定义服务端实现, 见`OAUTH_TICKET_SYSTEM_FORMAT_CONSTRAINTS`](https://github.com/InteractivePlus/PDK2021-Wrapper/blob/main/src/Config_template.php)
 
 ### 0.8 验证码系统
 
@@ -568,6 +576,8 @@ TicketEntity是作为工单拓展系统中的工单结构体:
 |is_urgent|bool|-|工单是否紧急|
 |created|int|-|工单创建时间|
 |last_updated|int|-|工单最后修改/回复时间|
+|is_resolved|bool|-|工单是否已经解决|
+|is_closed|bool|-|工单是否已经关闭|
 
 
 ## 1.0 用户系统
@@ -1725,5 +1735,50 @@ TicketEntity是作为工单拓展系统中的工单结构体:
 |键值|类型|可选|注释|
 |-|-|-|-|
 |tickets|array(`TicketEntity`)|-|列出的工单|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+### 5.3 回复工单
+
+此API让用户/OAuth用户/APP回复自己所拥有的工单
+
+---
+
+#### 5.3.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|POST|/tickets/{ticket_id}/responses|201 CREATED|
+
+#### 5.3.2 参数
+
+##### 5.3.2.1 用户请求时参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|ticket_id|string|-|填入URL|-|
+|is_frontend_token|bool|-|是否是前端Token|-|
+|uid|int|YES|只有是前端Token时才需要提供|-|
+|access_token|string|-|前端/OAuth Token|YES|
+|content|string|-|回复内容|YES|
+
+##### 5.3.2.2 APP请求时参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|ticket_id|string|-|填入URL|-|
+|client_id|string|-|APP的client_id|YES|
+|client_secret|string|-|APP的client_secret|YES|
+|responder_name|string|YES|回复者名字|YES|
+|content|string|-|回复内容|YES|
+
+
+#### 5.3.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|ticket|`TicketEntity`|-|修改后的工单|
 
 成功时`rootKey-data`定义: 无特殊键值
