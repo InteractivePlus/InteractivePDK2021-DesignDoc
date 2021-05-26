@@ -24,6 +24,7 @@
     - [0.15 OAuthUserInfo定义](#015-oauthuserinfo定义)
     - [0.16 TicketResponse定义](#016-ticketresponse定义)
     - [0.17 TicketEntity定义](#017-ticketentity定义)
+    - [0.18 MultipleResult定义](#018-multipleresult定义)
   - [1.0 用户系统](#10-用户系统)
     - [1.1 注册用户](#11-注册用户)
       - [1.1.1 请求方式](#111-请求方式)
@@ -172,7 +173,7 @@
       - [5.1.1 请求方式](#511-请求方式)
       - [5.1.2 参数](#512-参数)
       - [5.1.3 返回值](#513-返回值)
-    - [5.2 列出工单](#52-列出工单)
+    - [5.2 用户列出工单](#52-用户列出工单)
       - [5.2.1 请求方式](#521-请求方式)
       - [5.2.2 参数](#522-参数)
       - [5.2.3 返回值](#523-返回值)
@@ -182,6 +183,20 @@
         - [5.3.2.1 用户请求时参数](#5321-用户请求时参数)
         - [5.3.2.2 APP请求时参数](#5322-app请求时参数)
       - [5.3.3 返回值](#533-返回值)
+    - [5.4 查询工单信息](#54-查询工单信息)
+      - [5.4.1 请求方式](#541-请求方式)
+      - [5.4.2 参数](#542-参数)
+        - [5.4.2.1 用户请求时参数](#5421-用户请求时参数)
+        - [5.4.2.2 APP请求时参数](#5422-app请求时参数)
+      - [5.4.3 返回值](#543-返回值)
+    - [5.5 APP查询拥有的工单数量](#55-app查询拥有的工单数量)
+      - [5.5.1 请求方式](#551-请求方式)
+      - [5.5.2 参数](#552-参数)
+      - [5.5.3 返回值](#553-返回值)
+    - [5.6 APP列出已有工单](#56-app列出已有工单)
+      - [5.6.1 请求方式](#561-请求方式)
+      - [5.6.2 参数](#562-参数)
+      - [5.6.3 返回值](#563-返回值)
 
 ## 0.0 公共常数及API约定
 
@@ -578,6 +593,17 @@ TicketEntity是作为工单拓展系统中的工单结构体:
 |last_updated|int|-|工单最后修改/回复时间|
 |is_resolved|bool|-|工单是否已经解决|
 |is_closed|bool|-|工单是否已经关闭|
+
+### 0.18 MultipleResult定义
+
+MultipleResult&lt;`T`&gt;作为一个搜索结果被返回, 是一个模板数据格式:   
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|offset|int|-|本数据数据从服务端的第几条数据开始(默认0)|
+|count|int|-|本数据包含几条记录|
+|total_count|int|-|服务端上有几条记录|
+|result|array(`T`)|-|数据|
 
 
 ## 1.0 用户系统
@@ -1705,7 +1731,7 @@ TicketEntity是作为工单拓展系统中的工单结构体:
 成功时`rootKey-data`定义: 无特殊键值
 
 
-### 5.2 列出工单
+### 5.2 用户列出工单
 
 此API让用户/OAuth用户列出自己所拥有的工单
 
@@ -1780,5 +1806,110 @@ TicketEntity是作为工单拓展系统中的工单结构体:
 |键值|类型|可选|注释|
 |-|-|-|-|
 |ticket|`TicketEntity`|-|修改后的工单|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+### 5.4 查询工单信息
+
+此API让用户/OAuth用户/APP查询自己所拥有的工单信息
+
+---
+
+#### 5.4.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|GET|/tickets/{ticket_id}|200 OK|
+
+#### 5.4.2 参数
+
+##### 5.4.2.1 用户请求时参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|ticket_id|string|-|填入URL|-|
+|is_frontend_token|bool|-|是否是前端Token|-|
+|uid|int|YES|只有是前端Token时才需要提供|-|
+|access_token|string|-|前端/OAuth Token|YES|
+
+##### 5.4.2.2 APP请求时参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|ticket_id|string|-|填入URL|-|
+|client_id|string|-|APP的client_id|YES|
+|client_secret|string|-|APP的client_secret|YES|
+
+#### 5.4.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|ticket|`TicketEntity`|-|查询到的工单|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+### 5.5 APP查询拥有的工单数量
+
+此API让APP查询自己所拥有的工单数量
+
+---
+
+#### 5.5.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|GET|/apps/{client_id}/tickets/count|200 OK|
+
+#### 5.5.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|client_id|string|-|APP的client_id, 填入URL|YES|
+|client_secret|string|-|APP的client_secret|YES|
+|mask_id|string|YES|APP可以用此参数筛选指定的MaskID的工单|YES|
+|title|string|YES|APP可以用此参数筛选包含指定文本为标题的工单|-|
+
+#### 5.5.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|total_count|int|-|服务端共有几条记录|
+
+成功时`rootKey-data`定义: 无特殊键值
+
+### 5.6 APP列出已有工单
+
+此API让APP查询自己所拥有的工单数据
+
+---
+
+#### 5.6.1 请求方式
+
+|HTTP Method|URL|成功HTTP Code|
+|-|-|-|
+|GET|/apps/{client_id}/tickets|200 OK|
+
+#### 5.6.2 参数
+
+|参数|类型|可选|注释|格式同步|
+|-|-|-|-|-|
+|client_id|string|-|APP的client_id, 填入URL|YES|
+|client_secret|string|-|APP的client_secret|YES|
+|mask_id|string|YES|APP可以用此参数筛选指定的MaskID的工单|YES|
+|title|string|YES|APP可以用此参数筛选包含指定文本为标题的工单|-|
+|offset|int|YES|数据从服务端上第几条数据开始, 默认为0|-|
+|count|int|YES|数据需要包含几条(最多), 默认为-1, 指全部|-|
+
+#### 5.6.3 返回值
+
+成功时`dataKey-data`定义:
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|result|`MultipleResult`&lt;`TicketEntity`&gt;|-|查询到的信息|
 
 成功时`rootKey-data`定义: 无特殊键值
