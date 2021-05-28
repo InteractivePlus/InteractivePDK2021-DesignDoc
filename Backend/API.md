@@ -12,7 +12,7 @@
     - [0.3 通用返回格式](#03-通用返回格式)
     - [0.4 API参数发送方式](#04-api参数发送方式)
     - [0.5 UserEntity定义](#05-userentity定义)
-    - [0.6 `LoginFailedReason`登陆失败原因](#06-loginfailedreason登陆失败原因)
+    - [0.6 LoginFailedReason登陆失败原因定义](#06-loginfailedreason登陆失败原因定义)
     - [0.7 服务端格式同步](#07-服务端格式同步)
     - [0.8 验证码系统](#08-验证码系统)
     - [0.9 APP类型定义](#09-app类型定义)
@@ -364,7 +364,7 @@ UserEntity经常在API中作为一个数据类型被返回, 实际UserEntity也�
 }
 ```
 
-### 0.6 `LoginFailedReason`登陆失败原因
+### 0.6 LoginFailedReason登陆失败原因定义
 见[PDK-2021CoreLib中LoginFailedReasons.php](https://github.com/InteractivePlus/PDK2021-CoreLib/blob/main/src/User/Login/LoginFailedReasons.php)
 
 |FAILED_REASON|登陆失败原因|id|
@@ -789,13 +789,14 @@ MultipleResult&lt;`T`&gt;作为一个搜索结果被返回, 是一个模板数�
 
 ##### 1.6.3.1 失败时定义
 
-`dataKey-data`定义: 无特殊键值
-
-`rootKey-data`定义: 
+`dataKey-data`定义: 
 
 |键值|类型|可选|注释|
 |-|-|-|-|
-|errorReason|int|-|登录错误原因|
+|errorReason|`LoginFailedReason`|-|登录错误原因|
+
+
+`rootKey-data`定义: 无特殊键值
 
 ---
 
