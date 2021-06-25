@@ -25,6 +25,7 @@
     - [0.16 TicketResponse定义](#016-ticketresponse定义)
     - [0.17 TicketEntity定义](#017-ticketentity定义)
     - [0.18 MultipleResult定义](#018-multipleresult定义)
+    - [0.19 UserPermissionEntity定义(提案阶段)](#019-userpermissionentity定义提案阶段)
   - [1.0 用户系统](#10-用户系统)
     - [1.1 注册用户](#11-注册用户)
       - [1.1.1 请求方式](#111-请求方式)
@@ -203,10 +204,6 @@
         - [5.7.2.1 用户请求时参数](#5721-用户请求时参数)
         - [5.7.2.2 APP请求时参数](#5722-app请求时参数)
       - [5.7.3 返回值](#573-返回值)
-  - [6.0 用户管理及权限](#60-用户管理及权限)
-    - [6.1 申请用户权限](#61-申请用户权限)
-    - [6.1.1 用户权限格式](#611-用户权限格式)
-    - [6.1.2 用户权限表](#612-用户权限表)
 
 ## 0.0 公共常数及API约定
 
@@ -615,6 +612,82 @@ MultipleResult&lt;`T`&gt;作为一个搜索结果被返回, 是一个模板数�
 |total_count|int|-|服务端上有几条记录|
 |result|array(`T`)|-|数据|
 
+### 0.19 UserPermissionEntity定义(提案阶段)
+UserPermissionEntity是用户权限数据的抽象化实例. UserPermission, 在API返回UserSettingEntity实例数据时将以JSON格式返回, 具体格式如下:   
+
+UserPermission取值为`SettingBoolean`,在True/False基础上增加了INHERIT(继承),见[UserSettingEntity](#012-usersettingentity定义)中对`SettingBoolean`的定义   
+
+
+```json
+{
+  "isSuperAdmin": false,
+  "isNormalAdmin": true,
+  "UserModPerm": {
+    "AllGrant": false,
+    "AddUser": true,
+    "DelUser": false,
+    "GetUserInfo": true,
+    "ModifyUser":true
+  },
+  ...
+}
+```
+
+isSuperAdmin代表该用户是否是超级管理员，若为超级管理员，授予该用户所有板块的权限，忽略下列所有板块参数
+isNormalAdmin代表该用户是否是管理员，若为管理员，授予该用户特定板块权限的权限，若须指定该用户权限，只需填写指定权限json即可
+AllGrant为所有权限列表中的固定变量，若该参数为true，则忽略下列参数，授予该用户在该板块中所有权限
+
+普通管理员所拥有的权限如下
+|键值|类型|默认值|注释|
+|-|-|-|-|
+|UserModPerm|UserModPermEntity|-|赋予所有用户管理板块的权限|
+|TicketModPerm|TicketModPermEntity|-|赋予所有工单板块权限|
+|APPModPerm|APPModPermEntity|-|赋予所有APP板块权限|
+
+
+UserModPermEntity权限列表有如下参数
+
+---
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|AllGrant|SettingBoolean|-|AllGrant为所有权限列表中的固定变量，若该参数为true，则忽略下列参数，授予该用户在该板块中所有权限|
+|AddUser|SettingBoolean|-|是否赋予该用户添加用户权限|
+|DelUser|SettingBoolean|-|是否赋予该用户删除用户权限|
+|GetUserInfo|SettingBoolean|-|是否赋予该用户查看所有用户权限|
+|ModifyUser|SettingBoolean|-|是否赋予该用户修改普通用户权限|
+|ModifyAdminUser|SettingBoolean|-|是否赋予该用户修改管理员用户权限|
+
+---
+
+TicketModPermEntity权限列表有如下参数
+
+---
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|AllGrant|SettingBoolean|-|AllGrant为所有权限列表中的固定变量，若该参数为true，则忽略下列参数，授予该用户在该板块中所有权限|
+|ReplyTicket|SettingBoolean|-|是否赋予该用户回复工单权限|
+|CloseNormalTicket|SettingBoolean|-|是否赋予该用户关闭普通用户工单权限|
+|DelNormalTicket|SettingBoolean|-|是否赋予该用户删除普通用户工单权限|
+|CloseAdminTicket|SettingBoolean|-|是否赋予该用户关闭管理员工单权限|
+|ViewAdminTicket|SettingBoolean|-|是否赋予该用户查看管理员工单权限|
+
+---
+
+
+APPModPermEntity权限列表有如下参数
+
+---
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|AllGrant|SettingBoolean|-|AllGrant为所有权限列表中的固定变量，若该参数为true，则忽略下列参数，授予该用户在该板块中所有权限|
+|AddAPP|SettingBoolean|-|是否赋予用户添加APP权限|
+|maxAPPPerm|APPPermissionEntity|-|创建/修改的APP最大的Permission|
+|ViewAPP|SettingBoolean|-|是否赋予用户查看APP权限|
+|EditAPP|SettingBoolean|-|是否赋予用户修改APP权限|
+|EditAdminAPP|SettingBoolean|-|是否赋予用户修改管理员APP权限|
 
 ## 1.0 用户系统
 
@@ -1969,96 +2042,3 @@ MultipleResult&lt;`T`&gt;作为一个搜索结果被返回, 是一个模板数�
 |ticket|`TicketEntity`|-|修改后的工单|
 
 成功时`rootKey-data`定义: 无特殊键值
-
-
-## 6.0 用户管理及权限
-
-### 6.1 申请用户权限
-
-### 6.1.1 用户权限格式
-
-为了方便管理用户权限，规定如下格式(以用户管理为例)
-
-```json
-{
-  "isSuperAdmin": false,
-  "isNormalAdmin": true,
-  "User": {
-    "AllGrant": false,
-    "AddUser": true,
-    "DelUser": false,
-    "GetUserInfo": true,
-    "ModifyUser":true
-  },
-  ...
-}
-```
-
-isSuperAdmin代表该用户是否是超级管理员，若为超级管理员，授予该用户所有板块的权限，忽略下列所有板块参数
-isNormalAdmin代表该用户是否是管理员，若为管理员，授予该用户特定板块权限的权限，若须指定该用户权限，只需填写指定权限json即可
-AllGrant为所有权限列表中的固定变量，若该参数为true，则忽略下列参数，授予该用户在该板块中所有权限
-
-普通管理员所拥有的权限如下
-|键值|类型|默认值|注释|
-|-|-|-|-|
-|User|boolean|AllGrant:true|赋予所有用户管理板块的权限|
-|Ticket|boolean|-|赋予所有工单板块权限|
-|Email|boolean|AllGrant:false;SendEmail:true;ReplyEmail:true;ViewNormalUserEmailHistory:true;ViewAdminEmailHistory:false;...|赋予部分邮件板块的权限|
-
-
-
-
-### 6.1.2 用户权限表
-
-
-User代表用户管理板块权限
-User权限列表有如下参数
-
----
-
-|键值|类型|可选|注释|
-|-|-|-|-|
-|AllGrant|boolean|-|AllGrant为所有权限列表中的固定变量，若该参数为true，则忽略下列参数，授予该用户在该板块中所有权限|
-|AddUser|boolean|-|是否赋予该用户添加用户权限|
-|DelUser|boolean|-|是否赋予该用户删除用户权限|
-|GetNormalUserInfo|boolean|-|是否赋予该用户查看普通用户权限|
-|ModifyUser|int|-|是否赋予该用户修改普通用户权限权限|
-
-
----
-
-
-Email代表邮件板块权限
-Email权限列表有如下参数
-
----
-
-|键值|类型|可选|注释|
-|-|-|-|-|
-|AllGrant|boolean|-|AllGrant为所有权限列表中的固定变量，若该参数为true，则忽略下列参数，授予该用户在该板块中所有权限|
-|SendEmail|boolean|-|是否赋予该用户发送邮件权限|
-|ReplyEmail|boolean|-|是否赋予该用户回复邮件权限|
-|DelEmailHistory|boolean|-|是否赋予该用户删除邮件历史权限|
-|ViewNormalUserAdminHistory|boolean|-|是否赋予该用户查看管理员邮件历史|
-|ViewNormalUserEmailHistory|boolean|-|是否赋予该用户查看普通用户邮件历史|
-|ModifyEmailTemplate|int|-|是否赋予该用户修改邮件模板权限|
-
-
-
----
-
-
-Ticket代表工单板块权限
-Ticket权限列表有如下参数
-
----
-
-|键值|类型|可选|注释|
-|-|-|-|-|
-|AllGrant|boolean|-|AllGrant为所有权限列表中的固定变量，若该参数为true，则忽略下列参数，授予该用户在该板块中所有权限|
-|ReplyTicket|boolean|-|是否赋予该用户回复工单权限|
-|CloseNormalTicket|boolean|-|是否赋予该用户关闭普通用户工单权限|
-|DelNormalTicket|boolean|-|是否赋予该用户删除普通用户工单权限|
-|CloseAdminTicket|boolean|-|是否赋予该用户关闭管理员工单权限|
-|ViewAdminTicket|boolean|-|是否赋予该用户查看管理员工单权限|
-|ModifyTicketTemplate|int|-|是否赋予该用户修改工单模板权限|
