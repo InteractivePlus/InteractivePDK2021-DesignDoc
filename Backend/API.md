@@ -26,6 +26,7 @@
     - [0.17 TicketEntity定义](#017-ticketentity定义)
     - [0.18 MultipleResult定义](#018-multipleresult定义)
     - [0.19 UserPermissionEntity定义(提案阶段)](#019-userpermissionentity定义提案阶段)
+    - [0.20 APPPermissionEntity数据类型定义](#020-apppermissionentity数据类型定义)
   - [1.0 用户系统](#10-用户系统)
     - [1.1 注册用户](#11-注册用户)
       - [1.1.1 请求方式](#111-请求方式)
@@ -441,6 +442,7 @@ APPEntity经常在API中作为一个数据类型被返回, 实际APPEntity也是
 |redirectURI|string|-|OAuth授权成功回调地址|
 |create_time|int|-|创建时间|
 |owner_uid|int|-|APP拥有者用户uid|
+|permission|[`APPPermissionEntity`](#020-apppermissionentity数据类型定义)|-|APP权限|
 
 ---
 **还是不懂?**   
@@ -620,14 +622,14 @@ UserPermission取值为`SettingBoolean`,在True/False基础上增加了INHERIT(�
 
 ```json
 {
-  "isSuperAdmin": false,
-  "isNormalAdmin": true,
+  "isSuperAdmin": SettingBoolean::SET_YES,
+  "isNormalAdmin": SettingBoolean::SET_YES,
   "UserModPerm": {
-    "AllGrant": false,
-    "AddUser": true,
-    "DelUser": false,
-    "GetUserInfo": true,
-    "ModifyUser":true
+    "AllGrant": SettingBoolean::SET_YES,
+    "AddUser": SettingBoolean::SET_YES,
+    "DelUser": SettingBoolean::SET_YES,
+    "GetUserInfo": SettingBoolean::SET_YES,
+    "ModifyUser":SettingBoolean::SET_YES
   },
   ...
 }
@@ -688,6 +690,20 @@ APPModPermEntity权限列表有如下参数
 |ViewAPP|SettingBoolean|-|是否赋予用户查看APP权限|
 |EditAPP|SettingBoolean|-|是否赋予用户修改APP权限|
 |EditAdminAPP|SettingBoolean|-|是否赋予用户修改管理员APP权限|
+
+### 0.20 APPPermissionEntity数据类型定义
+
+TicketEntity是作为APP系统中返回的APP权限结构体:   
+
+|键值|类型|可选|注释|
+|-|-|-|-|
+|maxRecursionLevel|int|-|存储数据的最大叠加层数(数组中套数组)|
+|maxCompressedLen|int|-|储存数据的最大压缩后大小(bytes/每个用户), 默认256|
+|maxUncompressedLen|int|-|存储数据的最大压缩前大小(bytes/每个用户), 默认512|
+|maxDataRecordNum|int|-|储存数据的最大用户数,默认1000|
+|scopes|PDKAuthScope\[\]|-|允许授权范围,默认\['info','store_data'\]|
+|canReadUserRealData|boolean|-|可否读取用户真实数据(邮箱地址, 手机号等等), 一般形随意动APP设为true|
+|isOfficial|boolean|-|是否为形随意动官方APP|
 
 ## 1.0 用户系统
 
