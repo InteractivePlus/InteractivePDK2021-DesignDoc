@@ -1210,7 +1210,7 @@ TicketEntity是作为APP系统中返回的APP权限结构体:
 |veriCode|string|-|验证码|YES|
 |new_password|string|-|新密码|YES|
 
-注: 当使用手机验证码时,`email`, `phone`, `username`其中必填且只能填一个.
+注: `email`, `phone`, `username`其中必填且只能填一个.
 
 #### 1.15.3 返回值
 
